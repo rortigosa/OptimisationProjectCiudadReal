@@ -1,3 +1,4 @@
 *.mat
 *.fig
 *.vtk
+!code/fe_Gauss_integration/fe_spaces/FEM library/Quads/Quad_QuadRule_*
