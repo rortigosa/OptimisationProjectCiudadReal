@@ -69,7 +69,7 @@ if Iteration==1
 end
 ObjFunc               =  ObjFunc/ObjFunc0; 
 %--------------------------------------------------------------------------
-% COMPUTE p      
+% COMPUTE p (adjoint problem)     
 %--------------------------------------------------------------------------  
 p                     =  TestFunctionOptimisationComputation(ObjFunc0,...
                              Solution,Bc,NR,Geometry,Mesh,FEM,Quadrature,...
