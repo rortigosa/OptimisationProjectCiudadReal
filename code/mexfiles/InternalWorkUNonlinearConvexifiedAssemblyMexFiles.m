@@ -42,7 +42,7 @@ Optimisation   =  PlotUnstableElements(formulation,Optimisation,Solution,...
 Optimisation.stability_stiffness      =  ones(Mesh.volume.n_elem,1);
 for ielem=1:Mesh.volume.n_elem  
     %----------------------------------------------------------------------
-    % kinematics
+    % Kinematics
     %----------------------------------------------------------------------
     x_elem              =  x(:,connectivity(:,ielem));
     xold_elem           =  xold(:,connectivity(:,ielem));
