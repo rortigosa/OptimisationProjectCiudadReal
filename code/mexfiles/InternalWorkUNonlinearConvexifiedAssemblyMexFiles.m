@@ -70,7 +70,7 @@ for ielem=1:Mesh.volume.n_elem
     Elasticity0      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0);    
     Elasticity       =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity);    
     %----------------------------------------------------------------------
-    % Piola
+    % piola
     %----------------------------------------------------------------------
     Hu                   =  MatrixVectorMultiplicationMexC(Geometry.dim^2,ngauss,Elasticity0,reshape(DF,Geometry.dim^2,[]));                         
     Piola                =  Piola0 + reshape(Hu,Geometry.dim,Geometry.dim,[]);    
