@@ -1,0 +1,56 @@
+M   =  5;
+out =  rand(M,M);
+Out  = out;
+out =  reshape(out,M,M);
+ 
+for i=2:M 
+    pivot    =  out(i);
+    for j=1:M  
+        out(i+(j-1)*M) = (out(i+(j-1)*M)*out(1)/pivot - out(1 +(j-1)*M))*(pivot/out(1));
+    end
+end
+    
+for i=3:M
+    pivot      =  out(M+i);
+    for j=2:M 
+        out(i+(j-1)*M) = (out(i+(j-1)*M)*out(M+2)/pivot - out(2 +(j-1)*M))*(pivot/out(M+2));        
+    end
+end
+
+for i=4:M
+    pivot      =  out(2*M+i);
+    for j=3:M 
+        out(i+(j-1)*M) = (out(i+(j-1)*M)*out(2*M+3)/pivot - out(3 +(j-1)*M))*(pivot/out(2*M+3));        
+    end
+end
+
+for i=5:M
+    pivot      =  out(3*M+i);
+    for j=4:M 
+        out(i+(j-1)*M) = (out(i+(j-1)*M)*out(3*M+4)/pivot - out(4 +(j-1)*M))*(pivot/out(3*M+4));        
+    end
+end
+
+
+for k=2:M
+    for i=5:M
+        pivot      =  out(3*M+i);
+        for j=4:M
+            out(i+(j-1)*M) = (out(i+(j-1)*M)*out(3*M+4)/pivot - out(4 +(j-1)*M))*(pivot/out(3*M+4));
+        end
+    end
+    
+end
+
+
+asdf=98
+
+% for i=0; i<M*M; ++i) {
+%        out[i] = 0.;
+%     }
+%     for (mwSize i=1; i<M; ++i) {
+%         for (mwSize j=i-1; j<K; ++j) {
+%             out[i+j*M]  =  out[i-1+(j-1)*M]
+%                 out[k*M+i] += a[j*M+i]*b[k*K+j];
+%             }
+%         }

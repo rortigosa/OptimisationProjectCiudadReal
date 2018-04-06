@@ -1,0 +1,14 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+		ResidualsMatricesUC;
+		emxEnsureCapacity;
+		emxFree_real_T;
+		emxInit_real_T;
+		ResidualsMatricesUC_initialize;
+		ResidualsMatricesUC_terminate;
+		ResidualsMatricesUC_atexit;
+	local:
+		*;
+};

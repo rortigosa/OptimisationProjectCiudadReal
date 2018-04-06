@@ -1,0 +1,88 @@
+#pragma once /*Avoids redefinition of matfunctions in the translation unit*/
+
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+/* Geometric term in nonlinear elasticity associated with J term        
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+void GeometricJTerm(mwSize dim, double *WJ, const double *F, double *C) /*a is a mxm matrix*/
+{
+    for (mwSize i=0; i<dim*dim*dim*dim; i++){
+       C[i]  =  0.;   
+    }
+    if (dim==2){
+       C[0]  =  0.;
+       C[3]  =  1.;
+       C[6]  =  -1.;
+       C[9] =  -1.;
+       C[12] =  1;.
+       C[15] =  0.;               
+    }
+    else if (dim==3){
+             Tensor[5] =   F8;
+             Tensor[6] =   -F7;
+             Tensor[8] =   -F5;             
+             Tensor[9] =   F4;
+             Tensor[13] =  -F8;
+             Tensor[15] =  F6;
+             Tensor[16] =  F5;
+             Tensor[18] =  -F3;
+             Tensor[22] =   F7;
+             Tensor[23] =   -F6;
+             Tensor[25] =   -F4;
+             Tensor[26] =    F3;
+             Tensor[29] =   ;
+             Tensor[30] =   ;
+             Tensor[35] =   ;
+             Tensor[36] =   ;
+             Tensor[37] =   ;
+             Tensor[39] =   ;
+             Tensor[43] =   ;
+             Tensor[45] =   ;
+             Tensor[46] =   ;
+             Tensor[47] =   ;
+             Tensor[52] =   ;
+             Tensor[53] =   ;
+             Tensor[56] =   ;
+             Tensor[57] =   ;
+             Tensor[59] =   ;
+             Tensor[60] =   ;
+             Tensor[64] =   ;
+             Tensor[66] =   ;
+             Tensor[67] =   ;
+             Tensor[69] =   ;
+             Tensor[73] =   ;
+             Tensor[74] =   ;
+             Tensor[76] =   ;
+             Tensor[77] =   ;
+             
+             
+        
+
+ -F8
+  F7
+  F2
+ -F1
+  F8
+ -F6
+ -F2
+  F0
+ -F7
+  F6
+  F1
+ -F0
+  F5
+ -F4
+ -F2
+  F1
+ -F5
+  F3
+  F2
+ -F0
+  F4
+ -F3
+ -F1
+  F0        
+        
+    }
+}

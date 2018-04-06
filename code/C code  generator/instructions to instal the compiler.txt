@@ -1,0 +1,3 @@
+setenv('MW_MINGW64_LOC','C:\mingw-w64') 
+ 
+This one corresponds to the location of the folder mingw-w64 

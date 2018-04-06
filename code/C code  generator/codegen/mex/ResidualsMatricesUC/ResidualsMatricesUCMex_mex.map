@@ -1,0 +1,7 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+	local:
+		*;
+};

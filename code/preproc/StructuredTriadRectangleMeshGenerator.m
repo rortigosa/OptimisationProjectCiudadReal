@@ -1,0 +1,3 @@
+
+function [nodes,...
+          connectivity]  =  StructuredExtrudedHexaPrismMeshGenerator(degree,Lx,Ly,Lz,Nx,Ly,Nz)

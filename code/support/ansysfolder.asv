@@ -1,0 +1,17 @@
+function out = ansysfolder()
+%% return ANSYS (c) executable
+% This routine returns the full path of the ansys executable. The order of preference is
+% from last to first.
+ paths = {...
+    'C:\Documents and Settings\usuario\Escritorio\unidadF\Archivos de programa\Ansys Inc\v90\ANSYS\bin\intel\ansys90'
+ 'c:\Program Files\Tecplot\Tec360 2011R2\bin\preplot.exe', ...
+     'c:\Program Files\Tecplot\Tec360 2009\bin\preplot.exe', ...
+     '/usr/bin/preplot.linux64.26',...
+     '/usr/local/tecplot/bin/preplot',...
+     };
+ out = '';
+ for s = paths
+ if exist(s{1},'file')
+     out = s{1};
+ end
+ end

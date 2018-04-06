@@ -1,0 +1,3 @@
+
+function [nodes,...
+          connectivity]  =  StructuredTetPrismMeshGenerator(degree,Lx,Ly,Lz,Nx,Ly,Nz)

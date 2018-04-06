@@ -1,0 +1,14 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+		KinematicsFunctionVolumeC;
+		emxEnsureCapacity;
+		emxFree_real_T;
+		emxInit_real_T;
+		KinematicsFunctionVolumeC_initialize;
+		KinematicsFunctionVolumeC_terminate;
+		KinematicsFunctionVolumeC_atexit;
+	local:
+		*;
+};

@@ -1,0 +1,14 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+		FirstPiolaKirchhoffStressTensorUC;
+		emxEnsureCapacity;
+		emxFree_real_T;
+		emxInit_real_T;
+		FirstPiolaKirchhoffStressTensorUC_initialize;
+		FirstPiolaKirchhoffStressTensorUC_terminate;
+		FirstPiolaKirchhoffStressTensorUC_atexit;
+	local:
+		*;
+};

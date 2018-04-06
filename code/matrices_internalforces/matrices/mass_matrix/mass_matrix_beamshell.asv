@@ -1,0 +1,73 @@
+function [Maa,Maw,Mwa,Mww]   =  mass_matrix_beamshell(alpha,beta,str)
+
+rho                          =  str.data.Rho;
+time_factor                  =  str.data.delta_t*str.data.gamma_alpha_method;
+mechanical_element           =  str.solid.BEAM_SHELL.discrete.mechanical_element;
+node_beta                    =  str.solid.BEAM_SHELL.discrete.mesh.connectivities(mechanical_element,alpha);
+Nshape                       =  str.temp.mec_Nshape;
+R                            =  str.temp.R;
+Eulerian_covariants          =  str.temp.nodal_Eulerian_covariants;
+Lagrangian_contravariants    =  str.temp.Lagrangian_contravariants;
+
+%--------------------------------------------------------------------------
+% Nodal angular velocity and accelerations in node beta
+%--------------------------------------------------------------------------
+initial_dof_beta             =  node_beta*6-2;
+final_dof_beta               =  node_beta*6;
+angular_acceleration         =  str.solid.BEAM_SHELL.discrete.acceleration(initial_dof_beta:final_dof_beta);
+angular_velocity             =  str.solid.BEAM_SHELL.discrete.velocity(initial_dof_beta:final_dof_beta);
+%--------------------------------------------------------------------------
+% Linear acceleration in a particular gauss node
+%--------------------------------------------------------------------------
+acceleration                 =  reshape(str.solid.BEAM_SHELL.discrete.acceleration,6,size(str.solid.BEAM_SHELL.discrete.Lagrangian_X,2));
+linear_acceleration          =  acceleration(1:3,:);
+nodal_linear_acceleration    =  linear_acceleration(:,str.solid.BEAM_SHELL.discrete.mesh.connectivities(mechanical_element,:));
+gauss_linear_acceleration    =  nodal_linear_acceleration*Nshape;
+
+Maa1                         =  rho*Nshape(alpha)*Nshape(beta);
+
+Maw2                         =  zeros(3,3);
+Maw3                         =  zeros(3,3);
+Mwa4                         =  zeros(3,3);
+Mww4                         =  zeros(3,3);
+Mww5                         =  zeros(3,3);
+Mww6                         =  zeros(3,3);
+for inode=1:3
+    Maw2                     =  Maw2 + rho*(Nshape(alpha)*levi_civita(Eulerian_covariants(:,inode,beta)*Nshape(beta),3) + ...
+                                            Nshape(alpha)*levi_civita(angular_acceleration,3)*levi_civita(Eulerian_covariants(:,inode,beta)*Nshape(beta),3))*(Lagrangian_contravariants(:,inode)'*R);
+    Maw3                     =  Maw3 + rho*(time_factor*Nshape(alpha)*levi_civita(cross(angular_velocity,(Eulerian_covariants(:,inode,beta)*Nshape(beta))),3) - ...
+                                            time_factor*Nshape(alpha)*levi_civita(angular_velocity,3)*levi_civita(Eulerian_covariants(:,inode,beta)*Nshape(beta),3) +...
+                                            Nshape(alpha)*levi_civita(angular_velocity,3)*levi_civita(angular_velocity,3)*levi_civita(Eulerian_covariants(:,inode,beta)*Nshape(beta),3))*(Lagrangian_contravariants(:,inode)'*R);
+    Mwa4                     =  Mwa4 - rho*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*Nshape(beta)*(Lagrangian_contravariants(:,inode)'*R);
+    node_comparison          =  alpha-beta;
+    switch node_comparison
+        case 0
+             Mww4            =  Mww4 + rho*levi_civita(gauss_linear_acceleration,3)*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*Nshape(beta)*(Lagrangian_contravariants(:,inode)'*R);                                        
+    end
+end
+
+for inode=1:3
+    for jnode=1:3
+        node_comparison      =  alpha-beta;
+        b                    =  cross(angular_velocity,Eulerian_covariants(:,jnode,beta)*Nshape(beta));  
+        switch node_comparison
+            case 0
+                 Mww5        =  Mww5 + 0*rho*levi_civita(cross(angular_velocity,Eulerian_covariants(:,jnode,beta)*Nshape(beta)),3)*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*(Lagrangian_contravariants(:,inode)'*R)*(Lagrangian_contravariants(:,jnode)'*R);
+                 a           =  cross(angular_velocity,b);
+                 Mww6        =  Mww6 + rho*levi_civita(a,3)*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*(Lagrangian_contravariants(:,inode)'*R)*(Lagrangian_contravariants(:,jnode)'*R);
+        end
+%        Mww5                =  Mww5 + rho*(-levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3) + ...;
+%                                            levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(angular_acceleration,3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3))*(Lagrangian_contravariants(:,inode)'*R)*(Lagrangian_contravariants(:,jnode)'*R);
+        Mww5                 =  Mww5 + rho*(-levi_civita(Lagrangian_contravariants(:,inode)*Nshape(alpha),3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3) + ...;
+                                             levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(angular_acceleration,3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3))*(Lagrangian_contravariants(:,inode)'*R)*(Lagrangian_contravariants(:,jnode)'*R);
+        Mww6                 =  Mww6 + rho*(-time_factor*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(b,3) + ...
+                                             time_factor*levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(angular_velocity,3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3) - ...
+                                             levi_civita(Eulerian_covariants(:,inode,alpha)*Nshape(alpha),3)*levi_civita(angular_velocity,3)*levi_civita(angular_velocity,3)*levi_civita(Eulerian_covariants(:,jnode,beta)*Nshape(beta),3))*(Lagrangian_contravariants(:,inode)'*R)*(Lagrangian_contravariants(:,jnode)'*R);                                            
+    end
+end
+
+Maa                          =  Maa1;
+Maw                          =  0*(Maw2 + Maw3);
+Mwa                          =  0*Mwa4;
+Mww                          =  0*Mww4 + Mww5 + 0*Mww6;
+             
