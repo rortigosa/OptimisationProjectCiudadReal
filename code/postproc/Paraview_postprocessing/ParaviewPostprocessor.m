@@ -15,7 +15,7 @@ Quadrature.Chi   =  NodesIsoparametricSpace(Geometry.dim,1);
 [N,DN_chi]       =  ShapeFunctionsPostprocessing(Geometry.dim);
 FEM.postproc.N        =  N;
 FEM.postproc.DN_chi   =  DN_chi;
-FEM.postproc        =  MaterialGradientShapeFunctions(Geometry.dim,FEM.postproc,Quadrature.volume.bilinear,Solution,Mesh.volume.x);
+FEM.postproc        =  MaterialGradientShapeFunctions(Geometry,FEM.postproc,Quadrature.volume.bilinear,Solution,Mesh.volume.x);
 
 rho                =  Optimisation.density;
 penalty            =  Optimisation.penalty;

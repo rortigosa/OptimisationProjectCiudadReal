@@ -30,15 +30,13 @@ xold                    =  Solution.old.x.Eulerian_x;
 X                       =  Solution.x.Lagrangian_X;
 connectivity            =  Mesh.volume.x.connectivity;
 Klinear                 =  MatInfo.Klinear;
+ElasticityOrigin        =  MatInfo.ElasticityLinear;
 DNX                     =  FEM.volume.bilinear.x.DN_X;
 IntWeight               =  Quadrature.volume.bilinear.IntWeight;
 ngauss                  =  size(IntWeight,1);
 %--------------------------------------------------------------------------
 % Detect unstable elements
 %--------------------------------------------------------------------------
-Optimisation   =  PlotUnstableElements(formulation,Optimisation,Solution,...
-                                       Mesh,FEM,Quadrature,MatInfo,0,0,1);
- 
 Optimisation.stability_stiffness      =  ones(Mesh.volume.n_elem,1);
 for ielem=1:Mesh.volume.n_elem  
     %----------------------------------------------------------------------
@@ -57,18 +55,24 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    [Piola0,...
+    if ~Geometry.PlaneStress    
+       [Piola0,...
        Elasticity0]     =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
                                          MatInfo.lambda,Fo,Ho,Jo);    
-    [~,Elasticity]      =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
+       [~,Elasticity]   =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
                                           MatInfo.lambda,F,H,J);    
+    else
+       [Piola0,...
+       Elasticity0]     =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
+                                         MatInfo.lambda,Fo,Ho,Jo);    
+       [~,Elasticity]   =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
+                                          MatInfo.lambda,F,H,J);                                          
+    end        
     %----------------------------------------------------------------------
-    % Regularisation of the elasticity tensor 
+    % Regularisation of the elasticity tensor  
     %----------------------------------------------------------------------
-    %Elasticity0     =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity0);    
-    %Elasticity      =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity);    
-    Elasticity0      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0);    
-    Elasticity       =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity);    
+    Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
+    Elasticity      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);        
     %----------------------------------------------------------------------
     % piola
     %----------------------------------------------------------------------
@@ -88,10 +92,9 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Sparse assembly 
     %----------------------------------------------------------------------
-    Kdata(:,ielem)      =  Kxx(:);
+    Kdata(:,ielem)      =  Kxx(:);      
     Tdata(:,ielem)      =  Rx(:);    
 end     
-
 %--------------------------------------------------------------------------
 % Sparse assembly of the stiffness matrix.           
 %--------------------------------------------------------------------------

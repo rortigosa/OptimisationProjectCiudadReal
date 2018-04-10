@@ -1,5 +1,5 @@
 
-function DIDrho    =  DerivativeObjectiveFunctionCentralDifference(ptest,...
+function DIDrho    =  DerivativeObjectiveFunctionNonlinearConvexifiedMexFiles(ptest,...
                                      Mesh,Optimisation,Solution,MatInfo,...
                                      Geometry,FEM,Quadrature)   
 
@@ -23,6 +23,7 @@ xoldold            =  Solution.old_old.x.Eulerian_x;
 X                  =  Solution.x.Lagrangian_X;
 connectivity       =  Mesh.volume.x.connectivity;
 Klinear            =  MatInfo.Klinear;
+ElasticityOrigin   =  MatInfo.ElasticityLinear;
 ptest              =  reshape(ptest,Geometry.dim,[]);
 DNX                =  FEM.volume.bilinear.x.DN_X;
 IntWeight          =  Quadrature.volume.bilinear.IntWeight;
@@ -41,17 +42,28 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    [Piola0,...
+    if ~Geometry.PlaneStress
+       [Piola0,...
         Elasticity0]     =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
                                           MatInfo.lambda,Foo,Hoo,Joo);    
-    [~,...
+        [~,...
         Elasticity]      =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
                                           MatInfo.lambda,Fo,Ho,Jo);    
+    else
+       [Piola0,...
+        Elasticity0]     =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
+                                          MatInfo.lambda,Foo,Hoo,Joo);    
+        [~,...
+        Elasticity]      =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
+                                          MatInfo.lambda,Fo,Ho,Jo);            
+    end
     %----------------------------------------------------------------------
     % Regularisation of the elasticity tensor 
     %----------------------------------------------------------------------
-    Elasticity0      =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity0);        
-    Elasticity       =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity);    
+    %Elasticity0      =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity0,ElasticityOrigin);        
+    %Elasticity       =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity,ElasticityOrigin);    
+    Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
+    Elasticity      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);            
     %----------------------------------------------------------------------
     % Piola in the solid 
     %----------------------------------------------------------------------    

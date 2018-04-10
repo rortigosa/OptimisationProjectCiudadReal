@@ -10,6 +10,7 @@
 void perfomer(mwSize m,
               mwSize ngauss,
               const double *Matrix,
+              const double *MatrixStable,
               double *MatrixReg)
 {
 //-------------------------------------------------------------------------    
@@ -44,10 +45,7 @@ for (mwSize igauss=0; igauss<ngauss; ++igauss){
     //------------------------------------------------------------------
     // Determine upper bound
     //------------------------------------------------------------------
-    for (mwSize i=0; i<m*m; ++i){
-         Matrix_[i]  =  Matrix[i + igauss*m*m] + alpha_max*Imatrix[i];
-    }
-    stability     =  Sylvester(Matrix,m);  
+    stability     =  Sylvester2(&Matrix[igauss*m*m],&MatrixStable[igauss*m*m],m);  
     if (stability>0.9){
        for (mwSize i=0; i<m*m; ++i){
            MatrixReg[i + igauss*m*m]  =  Matrix[i + igauss*m*m];
@@ -60,13 +58,13 @@ for (mwSize igauss=0; igauss<ngauss; ++igauss){
         alpha_max  =  1.2*alpha_max;
        //------------------------------------------------------------------
        // Determine upper bound
-       //------------------------------------------------------------------
+       //------------------------------------------------------------------        
        for (mwSize i=0; i<m*m; ++i){
              Matrix_[i]  =  Matrix[i + igauss*m*m] + alpha_max*Imatrix[i];
          }
-         stability    =  Sylvester(Matrix_,m);
+         stability     =  Sylvester2(Matrix_,&MatrixStable[igauss*m*m],m);  
          if (stability>0.9){
-             BisectionStability(m, alpha_max, &Matrix[igauss*m*m], &MatrixReg[igauss*m*m]);
+             BisectionStability2(m, alpha_max, &Matrix[igauss*m*m], &MatrixStable[igauss*m*m], &MatrixReg[igauss*m*m]);
           }
            else {
                   alpha_max    =  alpha_max*10;
@@ -75,13 +73,13 @@ for (mwSize igauss=0; igauss<ngauss; ++igauss){
                   for (mwSize i=0; i<m*m; ++i){
                       Matrix_[i]  =  Matrix[i + igauss*m*m] + alpha_max*Imatrix[i];
                   }
-                  stability    =  Sylvester(Matrix_,m);
+                  stability     =  Sylvester2(Matrix_, &MatrixStable[igauss*m*m], m);  
               }
              for (mwSize i=0; i<m*m; ++i){
-                 BisectionStability(m, alpha_max, &Matrix[igauss*m*m], &MatrixReg[igauss*m*m]);
+                 BisectionStability2(m, alpha_max, &Matrix[igauss*m*m], &MatrixStable[igauss*m*m], &MatrixReg[igauss*m*m]);
              }
          }
-  }
+ }
 }
 //--------------------------
 // free temporaries
@@ -104,11 +102,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     size_t m, ngauss;
     double *m_, *ngauss_;
-    double *Matrix;    
+    double *Matrix;   
+    double *MatrixStable;
     /*-------------------------------------------------------------------*/
     /* outputs of the C function (computational routine)*/
     /*-------------------------------------------------------------------*/
-    double *MatrixReg;
+    double *MatrixReg;    
     /*-------------------------------------------------------------------*/
     /* create a pointer to the real data in the input matrix  */
     /*-------------------------------------------------------------------*/
@@ -117,6 +116,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     ngauss_            =  mxGetPr(prhs[1]);
     ngauss             =  (size_t)ngauss_[0];    
     Matrix             =  mxGetPr(prhs[2]);   
+    MatrixStable       =  mxGetPr(prhs[3]);
     /*-------------------------------------------------------------------*/
     /* Get a pointer to the real data in the output matrix */
     /*-------------------------------------------------------------------*/
@@ -126,7 +126,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     /* Call the computational routine */
     /*-------------------------------------------------------------------*/
-    perfomer((mwSize)m, (mwSize)ngauss, Matrix, MatrixReg);
+    perfomer((mwSize)m, (mwSize)ngauss, Matrix, MatrixStable, MatrixReg);
 }
 
 

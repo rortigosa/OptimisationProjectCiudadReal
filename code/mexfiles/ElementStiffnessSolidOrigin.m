@@ -7,7 +7,7 @@
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-function Kxx     =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
+function [Kxx,Elasticity]     =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
                                                 Quadrature,MatInfo)
 
 DN_chi           =  FEM.volume.bilinear.x.DN_chi;

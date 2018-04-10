@@ -64,7 +64,7 @@ user_change            =  0.01;
 ObjFunc                =  zeros(1000,1);
 c0                     =  1;
 xPhys0                 =  xPhys;
-while (change > user_change)  && (loop < 200)
+while (change > user_change)  && (loop < 301)
     iteration          =  iteration + 1;
     loopbeta           =  loopbeta+1;
     loop               =  loop+1;
@@ -120,47 +120,20 @@ while (change > user_change)  && (loop < 200)
        fprintf(' It.:%5i Obj.:%11.4f Max Horz. Displ.:%11.4f Max Vert. Displ.:%11.4f Vol.:%7.3f ch.:%7.3f\n',loop,c,...
                                                           max(abs(u(1,:))),max(abs(u(2,:))),mean(xPhys(:)),change);    
     end
-    %----------------------------------------------------------------------                
-    % PARAVIEW POSTPROCESSING          
     %----------------------------------------------------------------------            
-    cd(dir.output_folder)
-    ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,Quadrature,Optimisation,PostProc,0,['evolution_' num2str(iteration) '.vtk'])         
-    %----------------------------------------------------------------------                
-    % PLOT DEFORMED CONFIGURATION
+    % POSTPROCESSING OF RESULTS
     %----------------------------------------------------------------------            
-    subplot(3,2,1)
-    plot(Solution.x.Eulerian_x(1,:),Solution.x.Eulerian_x(2,:),'o','MarkerSize',2)
-    hold on
-    axis equal    
-    %----------------------------------------------------------------------                
-    % PLOT DENSITIES 
+    PostProc   =  CompliancePlots(dir,Geometry,Mesh,FEM,MatInfo,Solution,xPhys,...
+                          Quadrature,Optimisation,PostProc,iteration,ObjFunc,...
+                          Data,NR,Assembly,Bc,UserDefinedFuncs,TimeIntegrator);
     %----------------------------------------------------------------------            
-    subplot(3,2,2)
-    colormap(gray); imagesc(1-xPhys); caxis([0 1]); axis equal; axis off; drawnow;
-    %----------------------------------------------------------------------                
-    % PLOT UNSTABLE ELEMENTS
+    % SAVING RESULTS
     %----------------------------------------------------------------------            
-    Optimisation.density =  xPhys(:);
-    Optimisation    =  PlotUnstableElements(Data.formulation,Optimisation,Solution,...
-                             Mesh,FEM,Quadrature,MatInfo,0,1,iteration);        
-    subplot(3,2,3)
-    colormap(gray); imagesc(reshape(Optimisation.stability,size(xPhys,1),size(xPhys,2))); caxis([0 1]); axis equal; axis off; drawnow;
-    %----------------------------------------------------------------------                
-    % PLOT OBJECTIVE FUNCTION
+    SaveMatLab(iteration,dir,Optimisation,Geometry,Data,TimeIntegrator,...
+               FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...
+               UserDefinedFuncs,PostProc)
     %----------------------------------------------------------------------            
-    subplot(3,2,5)
-    plot(ObjFunc(1:iteration),'-o')
-    %----------------------------------------------------------------------            
-    % CHECK STABILITY OF THE DESIGN
-    %----------------------------------------------------------------------            
-    if iteration>=20
-       if ~mod(iteration,20)
-              StabilityFinalTopology(Optimisation,Data,NR,Geometry,Mesh,FEM,...
-                     Quadrature,Assembly,MatInfo,Bc,Solution,UserDefinedFuncs);    
-       end
-    end
-    %----------------------------------------------------------------------            
-    % UPDATE HEAVISIDE REGULARIZATION PARAMETER
+    % UPDATE HEAVISIDE REGULARIZATION PARAMETER  
     %----------------------------------------------------------------------            
     if beta < 32 && (loopbeta >= 50 || change <= user_change)
         loopbeta = 0;

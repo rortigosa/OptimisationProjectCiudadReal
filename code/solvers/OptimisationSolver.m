@@ -16,7 +16,6 @@ Mesh           =  MeshGenerationFormulation(FEM,Geometry,Data.formulation);
 %--------------------------------------------------------------------------
 [Solution,NR,Assembly,FEM,...
  Quadrature,MatInfo]  =  InitialisationFormulation(Data,Geometry,FEM,Mesh,NR,Quadrature,MatInfo);
-
 %--------------------------------------------------------------------------
 % Start lood opver loads, models, etc.
 %--------------------------------------------------------------------------

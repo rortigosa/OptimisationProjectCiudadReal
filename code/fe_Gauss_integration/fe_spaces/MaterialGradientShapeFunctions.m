@@ -6,14 +6,14 @@
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-function [FEM,Quadrature]    =  MaterialGradientShapeFunctions(dim,FEM,Quadrature,Solution,Mesh) 
+function [FEM,Quadrature]    =  MaterialGradientShapeFunctions(Geometry,FEM,Quadrature,Solution,Mesh) 
 
 DN_chi                       =  FEM.DN_chi;
 Xelem                        =  Solution.x.Lagrangian_X(:,Mesh.connectivity(:,1));
 n_gauss                      =  size(DN_chi,3);
 n_node_elem                  =  size(Xelem,2);
 DX_chi_Jacobian              =  zeros(n_gauss,1);
-DN_X                         =  zeros(dim,n_node_elem,n_gauss);
+DN_X                         =  zeros(Geometry.dim,n_node_elem,n_gauss);
 for igauss=1:n_gauss
     %----------------------------------------------------------------------
     % Compute derivative of displacements (Dx0DX)
@@ -28,7 +28,7 @@ for igauss=1:n_gauss
 end
 
 FEM.DN_X                     =  DN_X;
-Quadrature.IntWeight         =  Quadrature.W_v.*DX_chi_Jacobian;
+Quadrature.IntWeight         =  Quadrature.W_v.*DX_chi_Jacobian*Geometry.thickness;
 FEM.DX_chi_Jacobian          =  DX_chi_Jacobian;
 
 

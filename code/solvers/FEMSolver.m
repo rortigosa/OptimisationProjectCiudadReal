@@ -83,4 +83,5 @@ DIDrho                =  ComputeDerivativeObjectiveFunction(p,Mesh,...
 %--------------------------------------------------------------------------
 % SAVE AS WELL THE CONVERGED SOLUTION FOR THE NEXT OPTIMISATION ITERATION
 %--------------------------------------------------------------------------  
+Solution.old_Post     =  Solution.old;
 Solution.old          =  Solution;

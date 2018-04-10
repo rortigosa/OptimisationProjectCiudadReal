@@ -14,8 +14,7 @@ void MooneyRivlin(double mu1,
         const double *H_m,
         double J_m,
         double *P_m,
-        double *Elasticity_m,
-        double dim);
+        double *Elasticity_m);
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
 /*C FUNCTION FOR PLANE STRAIN*/
@@ -109,12 +108,17 @@ void MooneyRivlin<4>(double mu1,
     /*-------------------------------------------------------------------*/    
     double thickness_stretch, tolerance, residual;
     double DWDlambda, D2WDlambda;
-    thickness_stretch  =  0.;
+    thickness_stretch  =  1.;
     tolerance          =  1e-4;
-    while {residual>tolerance
-          DWDlambda          =  (mu1 + mu2*trace(transpose(F)*F))*thickness_stretch - (mu1 + 2*mu2)/thickness_stretch + J*lambda*(J*thickness_stretch - 1);
-          D2WDlambda         =  (mu1 + mu2*trace(transpose(F)*F)) + (mu1 + 2*mu2)/thickness_stretch*thickness_stretch + J*J*lambda;
+    residual           =  1.;
+    Tensor<double,ndim,ndim> FTF  =  transpose(F)*F;
+    double trace_FTF  =  trace(FTF);
+    
+    while (residual>tolerance){
+          DWDlambda          =  (mu1 + mu2*trace_FTF)*thickness_stretch - (mu1 + 2*mu2)/thickness_stretch + J*lambda*(J*thickness_stretch - 1);
+          D2WDlambda         =  (mu1 + mu2*trace_FTF) + (mu1 + 2*mu2)/(thickness_stretch*thickness_stretch) + J*J*lambda;
           thickness_stretch  =  thickness_stretch - (1./D2WDlambda)*DWDlambda;
+          residual           =  pow(DWDlambda*DWDlambda,0.5);
     }
     double t2;
     t2    =  thickness_stretch*thickness_stretch;
@@ -125,8 +129,10 @@ void MooneyRivlin<4>(double mu1,
     /*-------------------------------------------------------------------*/
     // COMPUTE FIRST DERIVATIVES OF THE MODEL    
     /*-------------------------------------------------------------------*/
-    Tensor<double,ndim,ndim> WF  =  (mu1 + mu2*t2)*F;
-    double WJ =  -(mu1 + 2*mu2)/J + lambda*thickness_stretch*(thickness_stretch*J - 1.) + mu2*J;    
+    //Tensor<double,ndim,ndim> WF  =  (mu1 + mu2*t2)*F;
+    Tensor<double,ndim,ndim> WF  =  t2*F;
+    //double WJ =  -(mu1 + 2*mu2)/J + lambda*thickness_stretch*(thickness_stretch*J - 1.) + mu2*J;    
+    double WJ =  t2;    
     /*-------------------------------------------------------------------*/
     // COMPUTE FIRST PIOLA STRESS TENSOR    
     /*-------------------------------------------------------------------*/
@@ -138,8 +144,8 @@ void MooneyRivlin<4>(double mu1,
     Tensor<double,ndim,ndim,ndim,ndim> I4D   =  permutation<Index<1,3,2,4>>(I_I);    
     Tensor<double,ndim,ndim,ndim,ndim> I4DT  =  permutation<Index<2,3,1,4>>(I_I);    
  
-    Tensor<double,ndim,ndim,ndim,ndim> WFF  =  (mu1 + mu2)*I4D;
-    double WJJ =  (mu1 + 2*mu2)/(J*J) + lambda + mu2;    
+    Tensor<double,ndim,ndim,ndim,ndim> WFF  =  (mu1 + mu2*t2)*I4D;
+    double WJJ =  (mu1 + 2*mu2)/(J*J) + lambda*(thickness_stretch*thickness_stretch) + mu2;    
     
     Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
     Tensor<double,ndim,ndim,ndim,ndim> C_Geom  =  WJ*(I_I - I4DT); 
@@ -147,15 +153,15 @@ void MooneyRivlin<4>(double mu1,
     // CROSS DERIVATIVES WITH RESPECT TO F2D AND THICKNESS STRETCH
     /*-------------------------------------------------------------------*/    
     Tensor<double,ndim,ndim> WFt    =  2*mu2*thickness_stretch*F;    
-    double WJt =  (mu1 + 2*mu2)/t2 + lambda*J*J;
+    double WJt =  2.*lambda*thickness_stretch*J;
     Tensor<double,ndim,ndim> DPDt   =  WFt + WJt*H;    
     Tensor<double,ndim,ndim,ndim,ndim> DPDt_DPDt = -(1./D2WDlambda)*outer(DPDt,DPDt);
     /*-------------------------------------------------------------------*/    
     // TOTAL CONTRIBUTION IN THE ELASTICITY TENSOR
     /*-------------------------------------------------------------------*/        
     Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  WFF + WJJ*H_H + C_Geom + DPDt_DPDt;    
-    Tensor<double,ndim*ndim,ndim*ndim> Elasticity  =  reshape<ndim*ndim,ndim*ndim>(Elasticity4D);
-    /*-------------------------------------------------------------------*/    
+    Tensor<double,ndim*ndim,ndim*ndim> Elasticity    =  reshape<ndim*ndim,ndim*ndim>(Elasticity4D);
+        /*-------------------------------------------------------------------*/    
     // Copy back from Fastor to C*
     /*-------------------------------------------------------------------*/    
     copy_fastor(P_m,P);    
@@ -234,6 +240,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     /*Inputs and declaration*/
     /*-------------------------------------------------------------------*/
+    double *dim_;
     size_t dim, ngauss;    
     const mwSize  *dims_F;   /* input scalar */   
     double *mu1_, *mu2_, *lambda_;
@@ -249,19 +256,22 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     /* create a pointer to the real data in the input matrix  */
     /*-------------------------------------------------------------------*/        
-    dims_F               =  mxGetDimensions(prhs[3]);
-    dim                  =  (size_t)dims_F[0];    
+    dim_                 =  mxGetPr(prhs[0]);
+    dim                  =  (size_t)dim_[0];    
+
+    dims_F               =  mxGetDimensions(prhs[4]);
+    //dim                  =  (size_t)dims_F[0];    
     ngauss               =  (size_t)dims_F[2];    
 
-    mu1_                 =  mxGetPr(prhs[0]);
-    mu2_                 =  mxGetPr(prhs[1]);
-    lambda_              =  mxGetPr(prhs[2]);
+    mu1_                 =  mxGetPr(prhs[1]);
+    mu2_                 =  mxGetPr(prhs[2]);
+    lambda_              =  mxGetPr(prhs[3]);
     mu1                  =  mu1_[0];
     mu2                  =  mu2_[0];
     lambda               =  lambda_[0];
-    F                    =  mxGetPr(prhs[3]);  
-    H                    =  mxGetPr(prhs[4]);
-    J                    =  mxGetPr(prhs[5]);
+    F                    =  mxGetPr(prhs[4]);  
+    H                    =  mxGetPr(prhs[5]);
+    J                    =  mxGetPr(prhs[6]);
     /*-------------------------------------------------------------------*/
     /* get a pointer to the real data in the output matrix */
     /*-------------------------------------------------------------------*/

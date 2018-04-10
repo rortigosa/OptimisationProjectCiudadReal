@@ -48,7 +48,7 @@ while accumulated_factor<1-1e-6
                                         FEM,Quadrature,Assembly,MatInfo,...
                                         Optimisation,Solution,TimeIntegrator);
     %----------------------------------------------------------------------
-    % Update Dirichlet boundary conditions.
+    % Update Dirichlet boundary conditions. 
     %----------------------------------------------------------------------
     Solution.old_old  =  Solution.old;
     Solution.old      =  Solution;
@@ -71,7 +71,7 @@ while accumulated_factor<1-1e-6
     %----------------------------------------------------------------------
     % Print on screen
     %----------------------------------------------------------------------
-    LinearisedSolverIterationPrint(incr_load,NR.n_incr_loads,'','');
+    LinearisedSolverIterationPrint(incr_load,NR.n_incr_loads,'','');    
 end
 
 %--------------------------------------------------------------------------

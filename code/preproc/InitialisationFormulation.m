@@ -25,14 +25,17 @@ Assembly          =  SparseIndicesUFormulation(Geometry.dim,Mesh);
 % Get the derivatives of the shape functions with respect to X.
 %--------------------------------------------------------------------------
 [FEM.volume.bilinear.x,...
-    Quadrature.volume.bilinear]  =  MaterialGradientShapeFunctions(Geometry.dim,FEM.volume.bilinear.x,Quadrature.volume.bilinear,Solution,Mesh.volume.x);
+  Quadrature.volume.bilinear]  =  MaterialGradientShapeFunctions(Geometry,...
+                                         FEM.volume.bilinear.x,Quadrature.volume.bilinear,...
+                                         Solution,Mesh.volume.x);
 %--------------------------------------------------------------------------
 % Compute stiffness matrix of an element in the solid in the origin 
 % (no deformations)
 %--------------------------------------------------------------------------
-K                 =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
+[K,Elasticity]                =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
                                                  Quadrature,MatInfo);
-MatInfo.Klinear   =  K;
+MatInfo.Klinear           =  K;
+MatInfo.ElasticityLinear  =  Elasticity;
 %--------------------------------------------------------------------------
 % Initialisation of kinematics
 %--------------------------------------------------------------------------  

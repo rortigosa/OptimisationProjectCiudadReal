@@ -54,6 +54,22 @@ void AbsVector(const double *vector, mwSize dim, double *out)
     }
 }
 
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+/* This function computes the absolute value of a double scalar*/
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+double AbsDouble(double scalar)
+{
+    double out;
+    if (scalar<0){
+       out  =  -scalar;     
+    }
+    else {
+       out  =  scalar;   
+    }
+    return out;
+}
 
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
@@ -487,7 +503,13 @@ void trisup(mwSize M, const double *a, double *out)
         for (mwSize i=k; i<M; ++i){
              pivot      =  out[(k-1)*M+i];            
              for (mwSize j=k-1; j<M; ++j){
-                out[i+j*M] = (out[i+j*M]*out[(k-1)*M+k-1]/pivot - out[k-1 + j*M])*(pivot/out[(k-1)*M + k-1]);
+                if (pivot>0.){
+                   out[i+j*M] = (out[i+j*M]*out[(k-1)*M+k-1]/pivot - out[k-1 + j*M])*(pivot/out[(k-1)*M + k-1]);
+                }
+                if (pivot<0.){
+                   out[i+j*M] = (out[i+j*M]*out[(k-1)*M+k-1]/pivot - out[k-1 + j*M])*(pivot/out[(k-1)*M + k-1]);
+                }
+                
             }
         }
     }
@@ -569,6 +591,50 @@ double Sylvester(const double *Matrix, mwSize m)
 
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
+/* Sylvester criterion
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+double Sylvester2(const double *Matrix, const double *MatrixStable, mwSize m)
+{
+    /*-----------------------------------*/
+    /* Compute the zero reference        */
+    /*-----------------------------------*/
+    double zero_;
+    double *Temp_ = (double*)malloc(sizeof(double)*m*m);
+    AbsVector(&MatrixStable[0], (size_t)m*m, Temp_);       
+    zero_   =  sequential_maximum_vector(Temp_, (size_t)m*m);    
+    zero_   =  AbsDouble(zero_*1e-6)*(-1);
+    /*-----------------------------------*/
+    /*Compute the minors                 */
+    /*-----------------------------------*/
+    double *minors = (double*)malloc(sizeof(double)*m);
+    minors_func(m,Matrix,minors);    
+    /*-----------------------------------*/
+    /* Compute the minimum of the minors */
+    /*-----------------------------------*/
+    double min_minors;
+    min_minors  =  sequential_minimum_vector(minors,m);        
+    /*-----------------------------------*/
+    /*Stability                          */
+    /*-----------------------------------*/
+    double stability;
+    stability       =  1.0;
+    if (min_minors<zero_){
+       stability    =  0.0;
+    }    
+    /*-----------------------------------*/
+    /* free temporaries                  */
+    /*-----------------------------------*/
+    free(minors);
+    free(Temp_);
+    /*-----------------------------------*/
+    /* Return stability                  */
+    /*-----------------------------------*/
+    return stability;
+}
+
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
 /* Bisection for regularisation of elasticity tensor
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
@@ -620,4 +686,58 @@ void BisectionStability(mwSize m, double alpha_max, const double *Hessian, doubl
   }
   free(Imatrix);
 }
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+/* Bisection for regularisation of elasticity tensor
+/*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
+void BisectionStability2(mwSize m, double alpha_max, const double *Hessian, const double *HessianStable, double *out)
+{
+  /*---------------------------*/
+  /*Initialice identity matrix */
+  /*---------------------------*/
+  double *Imatrix = (double*)malloc(sizeof(double)*m*m);
+  
+  for (mwSize i=0; i<m*m; ++i){
+      Imatrix[i] = 0.;
+  }
+  for (mwSize i=0; i<m; ++i){
+      Imatrix[i+i*m] = 1.;
+  }
+    mwSize NIter;
+    NIter = 10;
+  for (mwSize i=0; i<m*m; ++i){
+      out[i]  =  Hessian[i];   
+  }
+  /*---------------------------*/
+  /*Bisection process          */
+  /*---------------------------*/
+  double alpha_min, alpha, stability;
+  alpha_min  =  0.;
+  for (mwSize iter=0; iter<NIter; iter++){
+      alpha    =  (alpha_min + alpha_max)/2.;
+      for (mwSize i=0; i<m*m; ++i){    
+           out[i]  = Hessian[i] + alpha*Imatrix[i];
+          }
+      stability  =  Sylvester2(out,HessianStable, m);  
+      /*-----------------------*/
+      /*Stable solution        */
+      /*-----------------------*/
+      if (stability>0.9){
+         alpha_max =  alpha; 
+      }
+      /*-----------------------*/
+      /*Non stable solution    */
+      /*-----------------------*/
+      else {
+         alpha_min = alpha;
+         alpha     =  alpha_max;
+         for (mwSize i=0; i<m*m; ++i){    
+             out[i]  = Hessian[i] + alpha*Imatrix[i];
+         }
+      }
+  }
+  free(Imatrix);
+}
+
 

@@ -15,6 +15,7 @@ void perfomer(mwSize dim,
         const double *F,
         const double *H,
         const double *J,
+        const double *thickness_stretch,
         double *W)
 {
     /*-------------------------------------------------------------------*/
@@ -28,32 +29,21 @@ void perfomer(mwSize dim,
     /*The C function*/
     /*-------------------------------------------------------------------*/
     mwSize igauss;
-    double IIF, IIH, W0, Jc, WJ;
-    Jc   =  0.1;
+    double IIF, IIH, W0, WJ;
     if (dim==2){
         W0   =  mu1 + 1.5*mu2;
+        double t2, t;
         for (igauss=0; igauss<ngauss; ++igauss) {
             /*-----------------------------------------------------------*/
             /*Compute FT*/
             /*-----------------------------------------------------------*/
+            t           =  thickness_stretch[igauss];
+            t2          =  thickness_stretch[igauss]*thickness_stretch[igauss];
             transpose(&F[dim*dim*igauss],FT,dim,dim);
             matmul(dim,dim,dim,FT,&F[dim*dim*igauss],FTF);
             IIF         =  trace(FTF,dim);
-            if (J[igauss]>=Jc){
-               WJ  =  - (mu1 + 2.*mu2)*log(J[igauss]);
-            }
-            else {
-               double a1, a2, a3, fc, fpc, fppc;
-               fc    =  - (mu1 + 2.*mu2)*log(Jc);
-               fpc   =  - (mu1 + 2.*mu2)/Jc;
-               fppc  =    (mu1 + 2.*mu2)/pow(Jc,2);
-               a1    =  fppc/2.;
-               a2    =  fpc - 2.*a1*Jc;
-               a3    =  fc - a1*pow(Jc,2) - a2*Jc;               
-               WJ    =  a1*pow(J[igauss],2) + a2*J[igauss] + a3;  
-               
-            }            
-            W[igauss]   =  (mu1 + mu2)/2.*IIF + WJ + mu2/2.*pow(J[igauss],2) + lambda/2.*(pow(J[igauss]-1.,2)) - W0; 
+            WJ          =  - (mu1 + 2.*mu2)*log(J[igauss]);
+            W[igauss]   =  (mu1 + mu2*t2)/2.*IIF + WJ + mu2/2.*pow(J[igauss],2) + lambda/2.*(pow(J[igauss]*t-1.,2)) - W0; 
             }        
     }
     else if (dim==3){
@@ -68,19 +58,7 @@ void perfomer(mwSize dim,
             matmul(dim,dim,dim,HT,&H[dim*dim*igauss],HTH);
             IIF         =  trace(FTF,dim);
             IIH         =  trace(HTH,dim);
-            if (J[igauss]>=Jc){
-               WJ  =  - (mu1 + 2.*mu2)*log(J[igauss]);
-            }
-            else {
-               double a1, a2, a3, fc, fpc, fppc;
-               fc    =  - (mu1 + 2.*mu2)*log(Jc);
-               fpc   =  - (mu1 + 2.*mu2)/Jc;
-               fppc  =    (mu1 + 2.*mu2)/pow(Jc,2);
-               a1    =  fppc/2.;
-               a2    =  fpc - 2.*a1*Jc;
-               a3    =  fc - a1*pow(Jc,2) - a2*Jc;               
-               WJ    =  a1*pow(J[igauss],2) + a2*J[igauss] + a3;                 
-            }            
+            WJ          =  - (mu1 + 2.*mu2)*log(J[igauss]);
             W[igauss]   =  mu1/2.*IIF + mu2/2.*IIH + WJ + lambda/2.*(pow(J[igauss] - 1.,2)) - W0; 
             }                
     }
@@ -110,6 +88,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double *F;    
     double *H;    
     double *J;    
+    double *thickness_stretch;
     /*-------------------------------------------------------------------*/
     /* outputs of the C function (computational routine)*/
     /*-------------------------------------------------------------------*/
@@ -129,6 +108,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     F                  =  mxGetPr(prhs[3]);   
     H                  =  mxGetPr(prhs[4]);
     J                  =  mxGetPr(prhs[5]);
+    thickness_stretch  =  mxGetPr(prhs[6]);
     /*-------------------------------------------------------------------*/
     /* Get a pointer to the real data in the output matrix */
     /*-------------------------------------------------------------------*/
@@ -137,7 +117,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     /* Call the computational routine */
     /*-------------------------------------------------------------------*/
-    perfomer((mwSize)dim,(mwSize)ngauss, mu1, mu2, lambda, F, H, J, W);
+    perfomer((mwSize)dim,(mwSize)ngauss, mu1, mu2, lambda, F, H, J, thickness_stretch, W);
 }
 
 
