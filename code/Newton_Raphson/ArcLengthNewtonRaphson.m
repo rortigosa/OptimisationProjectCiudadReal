@@ -6,112 +6,145 @@
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-function str                        =  ArcLengthNewtonRaphson(str,max_factor)
+%function str                    =  ArcLengthNewtonRaphson(NR,Solution,Geometry,Mesh,Assembly,Bc,max_factor)
 
-str.AL.radius                       =  0.005;
-str.AL.fail                         =  0;
-str.AL.iteration                    =  0;
-str.NR.accumulated_factor           =  0.01;
-old_solution                        =  str.solution;
-old_NR                              =  str.NR;
-old_AL                              =  str.AL;
-str.solution.x.xincr                =  zeros(str.solution.n_dofs,1);
-str.NR.nonconvergence_criteria      =  1;
-while (str.NR.accumulated_factor<max_factor  ||  str.AL.fail==1)
+dir.output_folder   =  ['C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\MBBv2\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_0.0050667'];
+
+
+AL.radius                       =  0.005;
+AL.fail                         =  0;
+AL.iteration                    =  0;
+NR.accumulated_factor           =  0.01;
+
+
+%--------------------------------------------------------------------------
+% Initialisation of the formulation
+%--------------------------------------------------------------------------
+[Solution,NR,Assembly,FEM,...
+ Quadrature,MatInfo]  =  InitialisationFormulation(Data,Geometry,FEM,Mesh,NR,Quadrature,MatInfo);
+NR.nonlinearity                 =  'nonlinear';
+TimeIntegrator.type             =  'Static';
+%--------------------------------------------------------------------------
+% Initial Assembly
+%--------------------------------------------------------------------------
+Assembly                        =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mesh,...
+                                      FEM,Quadrature,Assembly,MatInfo,...
+                                      Optimisation,Solution,TimeIntegrator);    
+
+%--------------------------------------------------------------------------
+% Cut-off density
+%--------------------------------------------------------------------------
+cutoff  =  0.1;
+Optimisation.density(Optimisation.density>=cutoff) =  1;
+Optimisation.density(Optimisation.density<cutoff)  =  0;
+
+%--------------------------------------------------------------------------
+% Start
+%--------------------------------------------------------------------------
+old_solution                    =  Solution;
+old_NR                          =  NR;
+old_AL                          =  AL;
+Solution.x.xincr                =  zeros(Solution.n_dofs,1);
+NR.nonconvergence_criteria      =  1;
+stopping_condition              =  1;
+while (stopping_condition  ||  AL.fail==1)
     %----------------------------------------------------------------------
     % Initialisation variables  
     %----------------------------------------------------------------------    
-    str.NR.iteration                =  0;
-    str.AL.iteration                =  str.AL.iteration + 1;
-    str.solution.x.Dxk              =  zeros(str.geometry.dim,str.mesh.volume.x.n_nodes);
+    NR.iteration                =  0;
+    AL.iteration                =  AL.iteration + 1;
+    Solution.x.Dxk              =  zeros(Geometry.dim,Mesh.volume.x.n_nodes);
     %----------------------------------------------------------------------
     % Incremental variables for the load increment strategy.               
     %----------------------------------------------------------------------
-    str.NR.convergence_warning      =  0;
+    NR.convergence_warning      =  0;
     %----------------------------------------------------------------------
     % Re-start in case of non-convergence issues               
     %----------------------------------------------------------------------
-    if str.AL.fail
-       str.AL.radius                =  str.AL.radius/2;
-       str.solution                 =  old_solution;
-       str.NR                       =  old_NR;
-       str.solution.x.Dxk           =  zeros(str.geometry.dim,str.mesh.volume.x.n_nodes);
-       str                          =  TotalAssembly(str); 
-       str.AL.fail                  =  0;
-       str.AL.iteration             =  old_AL.iteration;
-       str.NR.iteration             =  0;
+    if AL.fail
+       AL.radius                =  AL.radius/2;
+       Solution                 =  old_solution;
+       NR                       =  old_NR;
+       Solution.x.Dxk           =  zeros(Geometry.dim,Mesh.volume.x.n_nodes);
+       Assembly                 =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mesh,...
+                                        FEM,Quadrature,Assembly,MatInfo,...
+                                        Optimisation,Solution,TimeIntegrator);    
+       AL.fail                  =  0;
+       AL.iteration             =  old_AL.iteration;
+       NR.iteration             =  0;
     end
     %----------------------------------------------------------------------    
-    % Update Dirichlet boundary conditions.      
+    % Update Dirichlet boundary conditions.        
     %----------------------------------------------------------------------    
-    str                             =  UpdateDirichletBoundaryConditions(str);
+    Solution                    =  UpdateDirichletBoundaryConditions(Data.formulation,Solution,Bc,NR);
     %----------------------------------------------------------------------
     % Updated residual for the next load increment taking into account 
     % Dirichlet boundary conditions.       
     %----------------------------------------------------------------------    
-    str                             =  ArcLengthInitialResidual(str);
+    Assembly                   =  ArcLengthInitialResidual(Geometry.dim,Data.formulation,...
+                                         Mesh,UserDefinedFuncs,Bc,Assembly,NR) ;   
     %----------------------------------------------------------------------
     % Necessary incremental variables.                                
     %----------------------------------------------------------------------    
     Residual_dimensionless          =  1e8;  
-    str.NR.nonconvergence_criteria  =  Residual_dimensionless>str.NR.tolerance;
-    while str.NR.nonconvergence_criteria    
-        tic  
-        str.NR.iteration            =  str.NR.iteration + 1;
+    NR.nonconvergence_criteria  =  Residual_dimensionless>NR.tolerance;
+    while NR.nonconvergence_criteria    
+        NR.iteration            =  NR.iteration + 1;
         %------------------------------------------------------------------
         % solving system of equations                                                                                         
         %------------------------------------------------------------------
-        [freedof,fixdof]            =  DeterminationVariableFreeFixedDofs(str);
+        [freedof,fixdof]            =  DeterminationVariableFreeFixedDofs('~',Solution,Bc,NR);
         
         uR                          =  NewSolveSystemEquations(freedof,fixdof,...
-                                               str.assembly.total_matrix,-str.assembly.Residual,...
-                                               zeros(str.solution.n_dofs,1));
+                                               Assembly.total_matrix,-Assembly.Residual,...
+                                               zeros(Solution.n_dofs,1));
         uF                          =  NewSolveSystemEquations(freedof,fixdof,...
-                                               str.assembly.total_matrix,str.bc.Neumann.force_vector,...
-                                               zeros(str.solution.n_dofs,1));
-        [uR,str.AL,...
-         str.NR,str.solution]       =  ArcLengthRootFindingV2(str.AL,str.NR,uR,uF,str.solution);                                           
-        str.solution.incremental_solution  =  uR;
+                                               Assembly.total_matrix,Bc.Neumann.force_vector,...
+                                               zeros(Solution.n_dofs,1));
+        [uR,AL,...
+         NR,Solution]       =  ArcLengthRootFindingV2(AL,NR,uR,uF,Solution);                                           
+        Solution.incremental_solution  =  uR;
         %------------------------------------------------------------------
         % update the variables of the problem. corrector step.                                
         %------------------------------------------------------------------
-        str                         =  FieldsUpdate(str); 
+        Solution             =  FieldsUpdate(Data,Geometry,Mesh,Solution,TimeIntegrator,'~');
         %------------------------------------------------------------------
         % update matrices and force vectors.                                                                                                                                                         
         %------------------------------------------------------------------
-        str                         =  TotalAssembly(str);
+        Assembly        =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mesh,...
+                                 FEM,Quadrature,Assembly,MatInfo,...
+                                 Optimisation,Solution,TimeIntegrator);    
         %------------------------------------------------------------------
         % Update residual.                                                                                                                                                          
         %------------------------------------------------------------------
-        str                         =  ArcLengthResidualUpdate(str);        
+        Assembly    =  ArcLengthResidualUpdate(Geometry.dim,Data.formulation,Mesh,UserDefinedFuncs,Bc,Assembly,NR);        
         %------------------------------------------------------------------
         % checking for convergence.                                                                                                                       
         %------------------------------------------------------------------
-        [str.NR,str.AL,Residual_dimensionless,...
-            str.assembly]           =  ArcLengthConvergence(str.NR,str.assembly,str.bc,str.AL);
+        [NR,AL,Residual_dimensionless,...
+            Assembly]           =  ArcLengthConvergence(NR,Assembly,Bc,AL);
         %------------------------------------------------------------------
         % screen ouput for current Newton-Raphson iteration.                                   
         %------------------------------------------------------------------
-        toc 
-        ArcLengthIterationPrint(str.NR,Residual_dimensionless,str.AL);
+        ArcLengthIterationPrint(NR,Residual_dimensionless,AL);
         %------------------------------------------------------------------
         % Store converged solution 
         %------------------------------------------------------------------
-        if str.NR.nonconvergence_criteria==0
-           old_solution             =  str.solution;
-           old_NR                   =  str.NR;
-           old_AL                   =  str.AL;
+        if NR.nonconvergence_criteria==0
+           old_solution             =  Solution;
+           old_NR                   =  NR;
+           old_AL                   =  AL;
         end
         %------------------------------------------------------------------
         % Break in case of nonconvergence            
         %------------------------------------------------------------------
-        switch str.AL.fail
+        switch AL.fail
                case 1
                     break;  
             otherwise
         end  
     end  
-    switch str.NR.convergence_warning
+    switch NR.convergence_warning
         %------------------------------------------------------------------
         % Non converged results 
         %------------------------------------------------------------------
@@ -123,14 +156,17 @@ while (str.NR.accumulated_factor<max_factor  ||  str.AL.fail==1)
             %--------------------------------------------------------------
             % Printing orders for the converged case.    
             %--------------------------------------------------------------
-            ArcLengthConvergedSolutionPrint(str.NR,str.AL);            
+            %ArcLengthConvergedSolutionPrint(NR,AL);            
             %--------------------------------------------------------------
             % Postprocessing for static case and saving results.                                     
             %--------------------------------------------------------------
-            ArcLengthPostprocessing(str);            
+            ArcLengthPostprocessing(dir,Optimisation,Geometry,Data,TimeIntegrator,...
+                    FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...
+                    UserDefinedFuncs,PostProc,AL)
+
             format long e              
     end                   
-    if (str.NR.convergence_warning==0  &&  str.AL.iteration>60)
+    if (NR.convergence_warning==0  &&  AL.iteration>60)
        break;
     end
 end                 
@@ -140,17 +176,17 @@ end
 %  maximum of all the converged simulations and we stimate linearly the
 %  final displaced configuration
 %--------------------------------------------------------------------------
-if (str.NR.convergence_warning==0  &&  str.AL.iteration>60)
-load_factor                =  zeros(str.AL.iteration ,1);
-for iload=1:str.AL.iteration 
+if (NR.convergence_warning==0  &&  AL.iteration>60)
+load_factor                =  zeros(AL.iteration ,1);
+for iload=1:AL.iteration 
     filename               =  ['Arc_Length_iteration_' num2str(iload) '.mat'];
     load(filename)
-    load_factor(iload)     =  str.NR.accumulated_factor;    
+    load_factor(iload)     =  NR.accumulated_factor;    
 end
 [x,id]                     =  max(load_factor);
 load(['Arc_Length_iteration_' num2str(id) '.mat'])
-str.solution.x.Eulerian_x  =  str.solution.x.Lagrangian_X + ...
-                             (1/str.NR.accumulated_factor)*(str.solution.x.Eulerian_x - str.solution.x.Lagrangian_X);
+Solution.x.Eulerian_x  =  Solution.x.Lagrangian_X + ...
+                             (1/NR.accumulated_factor)*(Solution.x.Eulerian_x - Solution.x.Lagrangian_X);
 end
     
     

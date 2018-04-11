@@ -61,4 +61,5 @@ gcc MooneyRivlinEnergyMexC.c -o MooneyRivlinEnergyMexC.mexw64 -shared -I"C:\Prog
 
 
 g++ MooneyRivlinPlaneStress.cpp -o MooneyRivlinPlaneStress.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
+g++ MooneyRivlinTransverseIsotropyTensionMexC.cpp -o MooneyRivlinTransverseIsotropyTensionMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
 

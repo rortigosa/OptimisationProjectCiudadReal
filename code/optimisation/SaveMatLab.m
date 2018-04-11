@@ -6,9 +6,15 @@ function SaveMatLab(iteration,dir,Optimisation,Geometry,Data,TimeIntegrator,...
 
 cd(fullfile(dir.output_folder))
 
-Solution      =  rmfield(Solution,'old');
-Solution      =  rmfield(Solution,'old_old');
-Solution      =  rmfield(Solution,'old_Post');
+if isfield(Solution,'old')
+   Solution      =  rmfield(Solution,'old');
+end
+if isfield(Solution,'old_old')
+   Solution      =  rmfield(Solution,'old_old');
+end
+if isfield(Solution,'old_Post')
+   Solution      =  rmfield(Solution,'old_Post');
+end
 
 
 save(['Results_Optimisation_Iteration_' num2str(iteration) '.mat'],'Optimisation',...

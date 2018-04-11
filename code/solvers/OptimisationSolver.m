@@ -59,11 +59,11 @@ for load_increment=1:length(ExampleData.loads)
                                         MatInfo,Bc,Solution,Mesh,Assembly,...
                                         UserDefinedFuncs,PostProc);
     end
-    %----------------------------------------------------------------------
-    % Saving to spec    ific folder
-    %----------------------------------------------------------------------
-    cd(fullfile(dir.output_folder))
-    save('Results_Optimisation_.mat')
+%     %----------------------------------------------------------------------
+%     % Saving to spec    ific folder
+%     %----------------------------------------------------------------------
+%     cd(fullfile(dir.output_folder))
+%     save('Results_Optimisation_.mat')
 end
 
 

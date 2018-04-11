@@ -6,32 +6,21 @@
 %
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-function str              =  ArcLengthResidualUpdate(str)
+function Assembly    =  ArcLengthResidualUpdate(dim,formulation,Mesh,UserDefinedFuncs,Bc,Assembly,NR)
 
 %--------------------------------------------------------------------------
 % Compute Neumann forces/electric charges
 %--------------------------------------------------------------------------
-str                       =  NeumannBcs(str);
+Bc                   =  NeumannBcs(dim,formulation,Mesh,UserDefinedFuncs,Bc);
 %--------------------------------------------------------------------------
 % Initialise the residual
 %--------------------------------------------------------------------------
-str.assembly.Residual     =  str.assembly.total_force;
-dofs                      =  (1:size(str.bc.Neumann.force_vector,1))';        
+Assembly.Residual    =  Assembly.total_force;
+dofs                 =  (1:size(Bc.Neumann.force_vector,1))';        
 %--------------------------------------------------------------------------
 % Compute the residual for static or dynamic simulations
 %--------------------------------------------------------------------------
-str.assembly.Residual(dofs,...
-            1)            =  str.assembly.total_force(dofs) -  ...
-                             str.bc.Neumann.force_vector*str.NR.accumulated_factor;                                     
-% %--------------------------------------------------------------------------
-% % Get value for the incremental load factor.
-% %--------------------------------------------------------------------------
-% str.NR                    =  ArcLengthRootFinding(str.NR,str.AL,...
-%                                          str.assembly,str.bc,str.solution);
-% %--------------------------------------------------------------------------
-% % Update finally the residual
-% %--------------------------------------------------------------------------
-% str.assembly.Residual(dofs,...
-%             1)            =  str.assembly.total_force(dofs) -  ...
-%                              str.bc.Neumann.force_vector*str.NR.accumulated_factor;
+Assembly.Residual(dofs,...
+            1)       =  Assembly.total_force(dofs) -  ...
+                             Bc.Neumann.force_vector*NR.accumulated_factor;                                     
                                      

@@ -1,9 +1,6 @@
 function  ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,...
                       Quadrature,Optimisation,PostProc,visibility,filename)
 
-
-                  
-   
 if visibility==0
    cutoff_density  =  Optimisation.Volfrac;
 else

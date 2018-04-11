@@ -44,15 +44,7 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    if ~Geometry.PlaneStress
-       [Piola,...
-        Elasticity]    =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
-                                        MatInfo.lambda,F,H,J);    
-    else
-       [Piola,...
-        Elasticity]    =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
-                                        MatInfo.lambda,F,H,J);    
-    end
+    [Piola,Elasticity]  =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
     %----------------------------------------------------------------------
     % Compute the residuals for the nonlinear model  
     %----------------------------------------------------------------------

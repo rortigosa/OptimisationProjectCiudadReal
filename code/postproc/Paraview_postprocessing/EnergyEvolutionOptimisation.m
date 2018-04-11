@@ -5,6 +5,12 @@ function [Energy,EnergyLin,EnergyReg,TotalEnergy,...,
     TotalEnergyRegSolid] =  EnergyEvolutionOptimisation(Geometry,...
                                                 Mesh,FEM,MatInfo,Solution,...
                                                 Quadrature,Optimisation)
+                                            
+switch MatInfo.model
+    case {'MooneyRivlin','NeoHookean'}
+    otherwise
+        error('This function is only available for Mooney-Rivlin and Neo-Hookean models')     
+end                    
 %--------------------------------------------------------------------------
 % Cut-off for densities
 %--------------------------------------------------------------------------

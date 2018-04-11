@@ -41,41 +41,41 @@ function  PostProc  =  CompliancePlots(dir,Geometry,Mesh,FEM,MatInfo,Solution,xP
 %--------------------------------------------------------------------------
 % STORE THE EVOLUTION OF THE THREE DIFFERENT ENERGIES
 %--------------------------------------------------------------------------                 
-[~,~,~,TotalEnergy,TotalEnergyLin,...
-   TotalEnergyReg,~,~,~,...
-   TotalEnergySolid,TotalEnergyLinSolid,...
-   TotalEnergyRegSolid]             =  EnergyEvolutionOptimisation(Geometry,...
-                                             Mesh,FEM,MatInfo,Solution,...
-                                             Quadrature,Optimisation);
-PostProc.TotalEnergy(iteration)     =  TotalEnergy;
-PostProc.TotalEnergyLin(iteration)  =  TotalEnergyLin; 
-PostProc.TotalEnergyReg(iteration)  =  TotalEnergyReg;
-PostProc.TotalEnergySolid(iteration)     =  TotalEnergySolid;
-PostProc.TotalEnergyLinSolid(iteration)  =  TotalEnergyLinSolid;
-PostProc.TotalEnergyRegSolid(iteration)  =  TotalEnergyRegSolid;
-subplot(3,2,6)
-% plot((1:iteration),PostProc.TotalEnergySolid(1:iteration),'-o','MarkerSize',2,...
-%                                                              'LineWidth',2)
-% hold on                                                         
-% plot((1:iteration),PostProc.TotalEnergyLinSolid(1:iteration),'-ro','MarkerSize',2,...
-%                                                              'LineWidth',2)                                                         
-% hold on                                                         
-% plot((1:iteration),PostProc.TotalEnergyRegSolid(1:iteration),'-go','MarkerSize',2,...
-%                                                              'LineWidth',2)                                                         
-% hold on                                                         
+% [~,~,~,TotalEnergy,TotalEnergyLin,...
+%    TotalEnergyReg,~,~,~,...
+%    TotalEnergySolid,TotalEnergyLinSolid,...
+%    TotalEnergyRegSolid]             =  EnergyEvolutionOptimisation(Geometry,...
+%                                              Mesh,FEM,MatInfo,Solution,...
+%                                              Quadrature,Optimisation);
+% PostProc.TotalEnergy(iteration)     =  TotalEnergy;
+% PostProc.TotalEnergyLin(iteration)  =  TotalEnergyLin; 
+% PostProc.TotalEnergyReg(iteration)  =  TotalEnergyReg;
+% PostProc.TotalEnergySolid(iteration)     =  TotalEnergySolid;
+% PostProc.TotalEnergyLinSolid(iteration)  =  TotalEnergyLinSolid;
+% PostProc.TotalEnergyRegSolid(iteration)  =  TotalEnergyRegSolid;
+% subplot(3,2,6)
+% % plot((1:iteration),PostProc.TotalEnergySolid(1:iteration),'-o','MarkerSize',2,...
+% %                                                              'LineWidth',2)
+% % hold on                                                         
+% % plot((1:iteration),PostProc.TotalEnergyLinSolid(1:iteration),'-ro','MarkerSize',2,...
+% %                                                              'LineWidth',2)                                                         
+% % hold on                                                         
+% % plot((1:iteration),PostProc.TotalEnergyRegSolid(1:iteration),'-go','MarkerSize',2,...
+% %                                                              'LineWidth',2)                                                         
+% % hold on                                                         
+% % 
+% Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyRegSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
+% plot((1:iteration),Diff_,'-go','MarkerSize',2,'LineWidth',2)
+% hold on
+% Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyLinSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
+% plot((1:iteration),Diff_,'-ro','MarkerSize',2,'LineWidth',2)
+%                                                          
+% hold on 
+% set_latex_font(12)
+% legend('(W^{2D} - W^{2D}_{Reg})/W^{2D}','(W^{2D} - W^{2D}_{Lin})/W^{2D}')
 % 
-Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyRegSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
-plot((1:iteration),Diff_,'-go','MarkerSize',2,'LineWidth',2)
-hold on
-Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyLinSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
-plot((1:iteration),Diff_,'-ro','MarkerSize',2,'LineWidth',2)
-                                                         
-hold on 
-set_latex_font(12)
-legend('(W^{2D} - W^{2D}_{Reg})/W^{2D}','(W^{2D} - W^{2D}_{Lin})/W^{2D}')
-
-
-grid on                                                          
+% 
+% grid on                                                          
 %--------------------------------------------------------------------------
 % PLOT DEFORMED CONFIGURATION
 %--------------------------------------------------------------------------

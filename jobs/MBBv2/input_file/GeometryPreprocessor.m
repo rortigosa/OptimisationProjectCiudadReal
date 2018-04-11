@@ -3,7 +3,7 @@
 function geometry             =  GeometryPreprocessor
 
 geometry.type                 =  'Structured_Quad_Rectangle_Inverted';
-geometry.PlaneStress          =  1;  % 1 is Plane stress, 0 is not
+geometry.PlaneStress          =  0;  % 1 is Plane stress, 0 is not
 geometry.thickness            =  0.01;
 if ~geometry.PlaneStress
    geometry.thickness         =  1;

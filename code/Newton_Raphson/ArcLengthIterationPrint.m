@@ -9,9 +9,5 @@
 
 function ArcLengthIterationPrint(NR,Residual_dimensionless,AL)
 
-fprintf('current newton-raphson iteration is %d for load increment %d\n',NR.iteration,NR.incr_load)
-fprintf('the residual is %12.5e\n',Residual_dimensionless);
-fprintf('the total acumulated load factor is %f\n',NR.accumulated_factor)
-fprintf('the radius is %12.5e\n',AL.radius)
-fprintf('--------------------------------------------------------------------\n')
-fprintf('--------------------------------------------------------------------\n\n')
+fprintf('Iteration: %d,  Load Incr: %d,  Residual: %12.5f,  Acc Factor: %f,  Radius: %12.5f',NR.iteration,NR.incr_load,Residual_dimensionless,NR.accumulated_factor,AL.radius)
+fprintf('\n--------------------------------------------------------------------\n')

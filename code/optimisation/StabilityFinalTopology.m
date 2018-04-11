@@ -10,7 +10,7 @@ NR.nonlinearity             =  'nonlinear';
 %--------------------------------------------------------------------------
 % Extreme filter for densities
 %--------------------------------------------------------------------------
-cutoff  =  0.2;
+cutoff  =  0.1;
 Optimisation.density(Optimisation.density>=cutoff) =  1;
 Optimisation.density(Optimisation.density<cutoff)  =  0;
 %--------------------------------------------------------------------------

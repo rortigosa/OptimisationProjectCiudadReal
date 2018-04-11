@@ -12,6 +12,7 @@ mat_info.density               =  1;
 % Chose material parameters for the different models
 %--------------------------------------------------------------------------
 mat_info.model                 =  'MooneyRivlin';
+mat_info.model                 =  'MooneyRivlinTITension';
 switch mat_info.model
     case 'MooneyRivlin'
         %------------------------------------------------------------------
@@ -56,6 +57,17 @@ switch mat_info.model
         mat_info.k2            =  0.1;
         mat_info.beta          =  4*mat_info.k1;
         mat_info.lambda        =  lambda0 - mat_info.beta*mat_info.mu;
+    case 'MooneyRivlinTITension'
+        %------------------------------------------------------------------
+        %  mu0  =  mu1 + mu2;   lambda0  =  lambda + 2*mu2;
+        %------------------------------------------------------------------
+        mat_info.mu1           =  (mu0);
+        mat_info.mu2           =  (mu0/2)*0;
+        mat_info.muani         =  mu0*10;
+        mat_info.lambda        =  (lambda0 - 2*mat_info.mu2);
+        mat_info.N0           =  [1;1]/norm([1;1]);
+%         mat_info.N0            =  [1;0]/norm([1;0]);
+%         mat_info.N0            =  [0;1]/norm([0;1]);
 end
 
 
