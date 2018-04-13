@@ -61,7 +61,7 @@ if NR.iteration>6
 end
 if NR.nonconvergence_criteria==0
    if NR.iteration<=3
-      if AL.fail==0
+      if AL.fail==0  && AL.radius<0.5
          AL.radius                    =  AL.radius*2;    
       end
    end

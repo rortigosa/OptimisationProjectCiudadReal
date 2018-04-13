@@ -1,0 +1,46 @@
+
+%--------------------------------------------------------------------------
+% Connectivity
+%--------------------------------------------------------------------------
+connectivity                =  [Mesh.volume.x.connectivity  Mesh.volume.x.connectivity+Mesh.volume.x.n_nodes];
+Mesh.volume.x.connectivity  =  connectivity;
+Mesh.volume.n_elem          =  size(connectivity,2);
+%--------------------------------------------------------------------------
+% New coordinates
+%--------------------------------------------------------------------------
+nodes_                      =  Mesh.volume.x.nodes;
+nodes_(1,:)                 =  nodes_(1,:) - min(Mesh.volume.x.nodes(1,:));
+nodes_(1,:)                 =  -nodes_(1,:);
+nodes_reflect               =  nodes_;
+nodes_reflect(1,:)          =  nodes_(1,:) + min(Mesh.volume.x.nodes(1,:));
+Mesh.volume.x.nodes         =  nodes_reflect;  
+%--------------------------------------------------------------------------
+% New Solution field
+%--------------------------------------------------------------------------
+x_                          =  Solution.x.Eulerian_x;
+x_(1,:)                  =  x_(1,:) - min(Mesh.volume.x.nodes(1,:));
+x_(1,:)                  =  -x_(1,:);
+x_reflect                =  x_;
+x_reflect(1,:)           =  x_(1,:) + min(Solution.x.Eulerian_x(1,:));
+Solution.x.Eulerian_x    =  x_reflect;
+
+X_                       =  Solution.x.Lagrangian_X;
+X_(1,:)                  =  X_(1,:) - min(Mesh.volume.x.nodes(1,:));
+X_(1,:)                  =  -X_(1,:);
+X_reflect                =  X_;
+X_reflect(1,:)           =  X_(1,:) + min(Solution.x.Eulerian_x(1,:));
+Solution.x.Lagrangian_X  =  X_reflect;
+%--------------------------------------------------------------------------
+% Density
+%--------------------------------------------------------------------------
+Optimisation.density     =
+
+
+filename  =  'TheMesh.vtk';
+ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,...
+                      Quadrature,Optimisation,PostProc,visibility,filename)
+                  
+                  
+                  
+                  
+                  

@@ -1,22 +1,12 @@
-%--------------------------------------------------------------------------
-%--------------------------------------------------------------------------
-%
-% Newton Raphson algorithm
-%
-%--------------------------------------------------------------------------
-%--------------------------------------------------------------------------
+function ControlOutput  =  ArcLengthNewtonRaphson(Data,NR,Geometry,Mesh,UserDefinedFuncs,Bc,...
+                                FEM,Quadrature,MatInfo,Optimisation,...
+                                TimeIntegrator,PostProc,save_flag)
 
-%function str                    =  ArcLengthNewtonRaphson(NR,Solution,Geometry,Mesh,Assembly,Bc,max_factor)
-
-dir.output_folder   =  ['C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\MBBv2\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_0.0050667'];
-
-
+ControlOutput                   =  cell(1);                            
 AL.radius                       =  0.005;
 AL.fail                         =  0;
 AL.iteration                    =  0;
 NR.accumulated_factor           =  0.01;
-
-
 %--------------------------------------------------------------------------
 % Initialisation of the formulation
 %--------------------------------------------------------------------------
@@ -47,6 +37,7 @@ old_AL                          =  AL;
 Solution.x.xincr                =  zeros(Solution.n_dofs,1);
 NR.nonconvergence_criteria      =  1;
 stopping_condition              =  1;
+NFails                          =  0;
 while (stopping_condition  ||  AL.fail==1)
     %----------------------------------------------------------------------
     % Initialisation variables  
@@ -62,6 +53,7 @@ while (stopping_condition  ||  AL.fail==1)
     % Re-start in case of non-convergence issues               
     %----------------------------------------------------------------------
     if AL.fail
+       NFails                   =  NFails + 1;
        AL.radius                =  AL.radius/2;
        Solution                 =  old_solution;
        NR                       =  old_NR;
@@ -72,6 +64,9 @@ while (stopping_condition  ||  AL.fail==1)
        AL.fail                  =  0;
        AL.iteration             =  old_AL.iteration;
        NR.iteration             =  0;
+    end
+    if NFails>20
+        break;
     end
     %----------------------------------------------------------------------    
     % Update Dirichlet boundary conditions.        
@@ -84,7 +79,7 @@ while (stopping_condition  ||  AL.fail==1)
     Assembly                   =  ArcLengthInitialResidual(Geometry.dim,Data.formulation,...
                                          Mesh,UserDefinedFuncs,Bc,Assembly,NR) ;   
     %----------------------------------------------------------------------
-    % Necessary incremental variables.                                
+    % Necessary incremental variables.                                 
     %----------------------------------------------------------------------    
     Residual_dimensionless          =  1e8;  
     NR.nonconvergence_criteria  =  Residual_dimensionless>NR.tolerance;
@@ -162,31 +157,35 @@ while (stopping_condition  ||  AL.fail==1)
             %--------------------------------------------------------------
             ArcLengthPostprocessing(dir,Optimisation,Geometry,Data,TimeIntegrator,...
                     FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...
-                    UserDefinedFuncs,PostProc,AL)
+                    UserDefinedFuncs,PostProc,AL,save_flag)
+            %--------------------------------------------------------------
+            % Get information to plot the equilibrium path.                                     
+            %--------------------------------------------------------------
+            ControlOutput{AL.iteration}  =  UserDefinedFuncs.ArcLengthControl(Solution,Bc,NR);    
 
             format long e              
     end                   
-    if (NR.convergence_warning==0  &&  AL.iteration>60)
+    if (NR.convergence_warning==0  &&  AL.iteration>300)
        break;
     end
 end                 
 
-%--------------------------------------------------------------------------
-%  if it is not possible to reach the a load factor of 1, we take the
-%  maximum of all the converged simulations and we stimate linearly the
-%  final displaced configuration
-%--------------------------------------------------------------------------
-if (NR.convergence_warning==0  &&  AL.iteration>60)
-load_factor                =  zeros(AL.iteration ,1);
-for iload=1:AL.iteration 
-    filename               =  ['Arc_Length_iteration_' num2str(iload) '.mat'];
-    load(filename)
-    load_factor(iload)     =  NR.accumulated_factor;    
-end
-[x,id]                     =  max(load_factor);
-load(['Arc_Length_iteration_' num2str(id) '.mat'])
-Solution.x.Eulerian_x  =  Solution.x.Lagrangian_X + ...
-                             (1/NR.accumulated_factor)*(Solution.x.Eulerian_x - Solution.x.Lagrangian_X);
-end
-    
+% %--------------------------------------------------------------------------
+% %  if it is not possible to reach the a load factor of 1, we take the
+% %  maximum of all the converged simulations and we stimate linearly the
+% %  final displaced configuration
+% %--------------------------------------------------------------------------
+% if (NR.convergence_warning==0  &&  AL.iteration>60)
+% load_factor                =  zeros(AL.iteration ,1);
+% for iload=1:AL.iteration 
+%     filename               =  ['Arc_Length_iteration_' num2str(iload) '.mat'];
+%     load(filename)
+%     load_factor(iload)     =  NR.accumulated_factor;    
+% end
+% [x,id]                     =  max(load_factor);
+% load(['Arc_Length_iteration_' num2str(id) '.mat'])
+% Solution.x.Eulerian_x  =  Solution.x.Lagrangian_X + ...
+%                              (1/NR.accumulated_factor)*(Solution.x.Eulerian_x - Solution.x.Lagrangian_X);
+% end
+%     
     

@@ -12,7 +12,7 @@ mat_info.density               =  1;
 % Chose material parameters for the different models
 %--------------------------------------------------------------------------
 mat_info.model                 =  'MooneyRivlin';
-mat_info.model                 =  'MooneyRivlinTITension';
+%mat_info.model                 =  'MooneyRivlinTITension';
 switch mat_info.model
     case 'MooneyRivlin'
         %------------------------------------------------------------------

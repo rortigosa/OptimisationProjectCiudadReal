@@ -4,6 +4,12 @@ function geometry    =  GeometryPreprocessor
 
 geometry.type        =  'Structured_Quad_Rectangle_Inverted';
 
+geometry.PlaneStress          =  1;  % 1 is Plane stress, 0 is not
+geometry.thickness            =  0.01;
+if ~geometry.PlaneStress
+   geometry.thickness         =  1;
+end
+
 switch geometry.type
     case 'Structured_Triad_Rectangle'    
           geometry.Lx   =  1;
@@ -18,8 +24,8 @@ switch geometry.type
           %geometry.Ny   =  20;
           geometry.Lx   =  0.8;
           geometry.Ly   =  0.2;
-          geometry.Nx   =  120;
-          geometry.Ny   =  30;
+          geometry.Nx   =  120*2;
+          geometry.Ny   =  30*2;
           %geometry.Nx   =  120*1;
           %geometry.Ny   =  30*1;
           geometry.dim  =  2;
@@ -62,4 +68,9 @@ switch geometry.type
           geometry.thickness  =  repmat(thickness/geometry.Nz,geometry.Nz,1);
           geometry.dim        =  3;
 end        
+
+if geometry.dim==3
+   geometry.PlaneStress       =  0;
+end
+
 

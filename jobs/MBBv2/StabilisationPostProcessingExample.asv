@@ -1,0 +1,79 @@
+function StabilisationPostProcessingExample
+
+CodePath  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal';
+JobsPath  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\MBBv2';
+InputPath =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\MBBv2\input_file';
+%--------------------------------------------------------------------------
+% Path to the code  
+%--------------------------------------------------------------------------
+if ~exist(CodePath,'dir')
+    error('No such folder or directory');
+end
+addpath(genpath(fullfile(CodePath,'code')));
+addpath(JobsPath);
+addpath(InputPath);
+%--------------------------------------------------------------------------
+% Regularisation 1
+%--------------------------------------------------------------------------
+jobfolder  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\MBBv2\Results for Meeting Friday\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_0.0456';
+addpath(genpath(fullfile(jobfolder)));
+loads   =  1:5:250;
+for iload=1:length(loads)
+load_   =  loads(iload);
+cd(jobfolder);
+load(['Results_Optimisation_Iteration_' num2str(load_) '.mat']);
+%--------------------------------------------------------------------------
+% Solve again the problem using linearised incremental approach
+%---------------------------------------------------------------------------
+Solution.old.x.Eulerian_x   =  Solution.x.Lagrangian_X;
+[Solution,...
+    Optimisation]           =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
+                                   FEM,Quadrature,Assembly,MatInfo,Optimisation,...
+                                   Bc,Solution,UserDefinedFuncs,TimeIntegrator,'~');
+%--------------------------------------------------------------------------
+% Connectivity
+%--------------------------------------------------------------------------
+connectivity                =  [Mesh.volume.x.connectivity  Mesh.volume.x.connectivity([2;1;4;3],:)+Mesh.volume.x.n_nodes];
+Mesh.volume.x.connectivity  =  connectivity;
+Mesh.volume.n_elem          =  size(connectivity,2);
+%--------------------------------------------------------------------------
+% New Solution field
+%--------------------------------------------------------------------------
+x_                          =  Solution.x.Eulerian_x;
+x_(1,:)                     =  x_(1,:) - min(Mesh.volume.x.nodes(1,:));
+x_(1,:)                     =  -x_(1,:);
+x_reflect                   =  x_;
+x_reflect(1,:)              =  x_(1,:) + min(Mesh.volume.x.nodes(1,:));
+Solution.x.Eulerian_x       =  [Solution.x.Eulerian_x x_reflect];
+Solution.x.Eulerian_x       =  [Solution.x.Eulerian_x x_];
+Solution.old.x.Eulerian_x;
+X_                          =  Solution.x.Lagrangian_X;
+X_(1,:)                     =  X_(1,:) - min(Mesh.volume.x.nodes(1,:));
+X_(1,:)                     =  -X_(1,:);
+X_reflect                   =  X_;
+X_reflect(1,:)              =  X_(1,:) + min(Mesh.volume.x.nodes(1,:));
+Solution.x.Lagrangian_X     =  [Solution.x.Lagrangian_X  X_reflect];
+%--------------------------------------------------------------------------
+% Density
+%--------------------------------------------------------------------------
+Optimisation.density        =  [Optimisation.density; Optimisation.density];
+%--------------------------------------------------------------------------
+% New coordinates
+%--------------------------------------------------------------------------
+nodes_                      =  Mesh.volume.x.nodes;
+nodes_(1,:)                 =  nodes_(1,:) - min(Mesh.volume.x.nodes(1,:));
+nodes_(1,:)                 =  -nodes_(1,:);
+nodes_reflect               =  nodes_;
+nodes_reflect(1,:)          =  nodes_(1,:) + min(Mesh.volume.x.nodes(1,:));
+Mesh.volume.x.nodes         =  [Mesh.volume.x.nodes  nodes_reflect];  
+%--------------------------------------------------------------------------
+% Deformed configurations
+%--------------------------------------------------------------------------
+ParaviewRegularisationQuantification(Geometry,Mesh,FEM,MatInfo,Solution,...
+    Quadrature,Optimisation,1,['Regularisation_' num2str(loads(iload)) '.vtk']);
+end                  
+                  
+
+                  
+end
+                  

@@ -64,18 +64,17 @@ function  PostProc  =  CompliancePlots(dir,Geometry,Mesh,FEM,MatInfo,Solution,xP
 % %                                                              'LineWidth',2)                                                         
 % % hold on                                                         
 % % 
-% Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyRegSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
-% plot((1:iteration),Diff_,'-go','MarkerSize',2,'LineWidth',2)
-% hold on
-% Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyLinSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
-% plot((1:iteration),Diff_,'-ro','MarkerSize',2,'LineWidth',2)
-%                                                          
-% hold on 
-% set_latex_font(12)
-% legend('(W^{2D} - W^{2D}_{Reg})/W^{2D}','(W^{2D} - W^{2D}_{Lin})/W^{2D}')
-% 
-% 
-% grid on                                                          
+Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyRegSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
+plot((1:iteration),Diff_,'-go','MarkerSize',2,'LineWidth',2)
+hold on
+Diff_  =   (PostProc.TotalEnergySolid(1:iteration) - PostProc.TotalEnergyLinSolid(1:iteration))./PostProc.TotalEnergySolid(1:iteration);
+plot((1:iteration),Diff_,'-ro','MarkerSize',2,'LineWidth',2)
+                                                         
+hold on 
+set_latex_font(12)
+legend('(W^{2D} - W^{2D}_{Reg})/W^{2D}','(W^{2D} - W^{2D}_{Lin})/W^{2D}')
+%  
+grid on                                                          
 %--------------------------------------------------------------------------
 % PLOT DEFORMED CONFIGURATION
 %--------------------------------------------------------------------------

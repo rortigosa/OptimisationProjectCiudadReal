@@ -12,7 +12,6 @@ function Reg_parameter    =  RegularisationQuantification(Geometry,Mesh,FEM,...
 %--------------------------------------------------------------------------
 % Extract from the structures   
 %--------------------------------------------------------------------------
-
 xold                      =  Solution.old.x.Eulerian_x;
 X                         =  Solution.x.Lagrangian_X;
 connectivity              =  Mesh.volume.x.connectivity;

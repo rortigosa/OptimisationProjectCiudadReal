@@ -13,7 +13,9 @@ function p    =  TestFunctionOptimisationComputation(ObjFunc0,...
  
 if Solution.instability==1
    NR.nonlinearity          =  'linearised_convexified';
-   Solution                 =  Solution.old; 
+   %Solution                 =  Solution.old; 
+   Solution.x.Eulerian_x      =  Solution.old.x.Eulerian_x;
+   Solution.old.x.Eulerian_x  =  Solution.old_old.x.Eulerian_x;
 end
                           
 %--------------------------------------------------------------------------

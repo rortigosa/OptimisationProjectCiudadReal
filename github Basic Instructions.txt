@@ -1,0 +1,29 @@
+Make sure you are in the right folder (the repository folder always contains a hidden folder called .git)
+
+
+First add all changes:
+1. git add -A .
+Commit the changes with a message
+2. git commit -m "your message"
+Ammendment to your comment can be made using 
+2.1 git commit -am "your message"
+Finally push the updates to the remote (online) branch
+3. git push -u origin master
+Pulling the updates into a new machine requires
+4. git pull origin master
+
+
+Your colleagues should be able to download the new version in a new computer using 
+
+1. git clone "url of repository"
+2. cd into the directory and
+3. git pull origin master
+
+
+extras:
+check status of your local repo
+git status
+check commit history
+git log
+
+

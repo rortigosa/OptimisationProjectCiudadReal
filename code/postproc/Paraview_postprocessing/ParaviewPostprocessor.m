@@ -3,7 +3,7 @@ function  ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,...
 
 if visibility==0
    cutoff_density  =  Optimisation.Volfrac;
-else
+else 
    cutoff_density  =  0;
 end
     
@@ -31,6 +31,7 @@ x_solid                               =  zeros(Geometry.dim,n_nodes);
 X_solid                               =  zeros(Geometry.dim,n_nodes);
 %F_solid                              =  zeros(Geometry.dim^2,n_nodes);
 p_solid                               =  zeros(n_nodes,1);
+
 %--------------------------------------------------------------------------
 %  Loop over elements 
 %--------------------------------------------------------------------------
@@ -38,14 +39,14 @@ final                                 =  0;
 for ielem=1:Mesh.volume.n_elem
     if rho(ielem)>cutoff_density
     %----------------------------------------------------------------------
-    % x and X of the postprocessing mesh mesh 
+    % x and X of the postprocessing mesh mesh   
     %----------------------------------------------------------------------
     xelem                             =  zeros(Geometry.dim,2^Geometry.dim);
     Xelem                             =  zeros(Geometry.dim,2^Geometry.dim);
     for inode=1:2^Geometry.dim
         xelem(:,inode)                =  Solution.x.Eulerian_x(:,Mesh.volume.x.connectivity(:,ielem))*FEM.postproc.N(:,inode);
         Xelem(:,inode)                =  Solution.x.Lagrangian_X(:,Mesh.volume.x.connectivity(:,ielem))*FEM.postproc.N(:,inode);        
-    end
+    end 
     %----------------------------------------------------------------------
     % Gradients in the nodes of the postprocessing mesh
     %----------------------------------------------------------------------
@@ -53,8 +54,13 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    Piola           =  rhop(ielem)*MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
+    if ~Geometry.PlaneStress
+       Piola           =  rhop(ielem)*MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
                                         MatInfo.lambda,F,H,J);       
+    else
+       Piola           =  rhop(ielem)*MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
+                                        MatInfo.lambda,F,H,J);       
+    end        
     %----------------------------------------------------------------------
     % Compute Cauchy
     %----------------------------------------------------------------------

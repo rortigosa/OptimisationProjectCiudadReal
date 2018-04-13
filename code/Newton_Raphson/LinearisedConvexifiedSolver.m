@@ -48,10 +48,12 @@ while accumulated_factor<1-1e-6
                                         FEM,Quadrature,Assembly,MatInfo,...
                                         Optimisation,Solution,TimeIntegrator);
     %----------------------------------------------------------------------
-    % Update Dirichlet boundary conditions. 
+    % Update Dirichlet boundary conditions.   
     %----------------------------------------------------------------------
     Solution.old_old  =  Solution.old;
     Solution.old      =  Solution;
+    Solution.old      =  rmfield(Solution.old,'old');
+    Solution.old      =  rmfield(Solution.old,'old_old');
     Solution          =  UpdateDirichletBoundaryConditions(Data.formulation,Solution,Bc,NR);
     %----------------------------------------------------------------------
     % update matrices and force vectors.
