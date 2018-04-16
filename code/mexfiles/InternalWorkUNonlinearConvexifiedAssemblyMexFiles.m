@@ -34,6 +34,8 @@ ElasticityOrigin        =  MatInfo.ElasticityLinear;
 DNX                     =  FEM.volume.bilinear.x.DN_X;
 IntWeight               =  Quadrature.volume.bilinear.IntWeight;
 ngauss                  =  size(IntWeight,1);
+% eigv0  =  100;
+% eigv   =  100;
 %--------------------------------------------------------------------------
 % Detect unstable elements
 %--------------------------------------------------------------------------
@@ -43,11 +45,11 @@ for ielem=1:Mesh.volume.n_elem
     % Kinematics
     %----------------------------------------------------------------------
     x_elem              =  x(:,connectivity(:,ielem));
-    xold_elem           =  xold(:,connectivity(:,ielem));
+    %xold_elem           =  xold(:,connectivity(:,ielem));
     X_elem              =  X(:,connectivity(:,ielem));
     [F,H,J]             =  KinematicsFunctionFinalMexC(x_elem,X_elem,DNX);
-    [Fo,Ho,Jo]          =  KinematicsFunctionFinalMexC(xold_elem,X_elem,DNX);
-    [DF,~,~]            =  KinematicsFunctionFinalMexC(x_elem-xold_elem,X_elem,DNX);
+    %[Fo,Ho,Jo]          =  KinematicsFunctionFinalMexC(xold_elem,X_elem,DNX);
+    %[DF,~,~]            =  KinematicsFunctionFinalMexC(x_elem-xold_elem,X_elem,DNX);
     %----------------------------------------------------------------------
     % Compute displacements in the element 
     %----------------------------------------------------------------------
@@ -55,19 +57,38 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    [Piola0,...
-        Elasticity0]    =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Fo,Ho,Jo);
-    [~,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
+    %[Piola0,...
+    %    Elasticity0]    =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Fo,Ho,Jo);
+    %[~,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
+    [Piola,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
     %----------------------------------------------------------------------
     % Regularisation of the elasticity tensor  
     %----------------------------------------------------------------------
-    Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
+    %Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
     Elasticity      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);        
+%     %Elasticity0     =  RegularisationElasticityMethodMatLab(Geometry.dim,ngauss,Elasticity0,ElasticityOrigin);    
+%     %Elasticity      =  RegularisationElasticityMethodMatLab(Geometry.dim,ngauss,Elasticity,ElasticityOrigin);    
+%     %Elasticity0        =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity0);    
+%     %Elasticity         =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity);    
+% %     for igauss=1:4
+% %         [eigv_,I0]   =  min(eig(Elasticity(:,:,igauss))); 
+% %         [eigv0_,I]  =  min(eig(Elasticity(:,:,igauss))); 
+% %         if eigv_<eigv
+% %            eigv = eigv_;
+% %            Elem0  =  ielem; 
+% %            IG0    =  I;
+% %         end 
+% %         if eigv0_<eigv0
+% %            eigv0 = eigv0_;
+% %            Elem   =  ielem;
+% %            IG     =  I;
+% %         end
+% %     end
     %----------------------------------------------------------------------
     % piola
     %----------------------------------------------------------------------
-    Hu                   =  MatrixVectorMultiplicationMexC(Geometry.dim^2,ngauss,Elasticity0,reshape(DF,Geometry.dim^2,[]));                         
-    Piola                =  Piola0 + reshape(Hu,Geometry.dim,Geometry.dim,[]);    
+    %Hu                   =  MatrixVectorMultiplicationMexC(Geometry.dim^2,ngauss,Elasticity0,reshape(DF,Geometry.dim^2,[]));                         
+    %Piola                =  Piola0 + reshape(Hu,Geometry.dim,Geometry.dim,[]);    
     %----------------------------------------------------------------------
     % Compute residuals and stiffness matrix for the nonlinear model
     %----------------------------------------------------------------------       

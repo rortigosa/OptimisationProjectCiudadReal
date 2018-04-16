@@ -16,6 +16,13 @@ function [ObjFunc,ObjFunc0,...
                                 FEM,Quadrature,Assembly,MatInfo,Optimisation,...
                                 Bc,Solution,UserDefinedFuncs)
 
+
+%--------------------------------------------------------------------------                            
+% Do consistent linearisation  durin the first 20 iterations
+%--------------------------------------------------------------------------                            
+% if Iteration<20
+%    NR.nonlinearity  =  'nonlinear';
+% end
 %--------------------------------------------------------------------------
 % INITIALISATION 
 %--------------------------------------------------------------------------  
@@ -39,10 +46,12 @@ switch TimeIntegrator.type
                                         FEM,Quadrature,Assembly,MatInfo,Optimisation,...
                                         Bc,Solution,UserDefinedFuncs,TimeIntegrator,'~');
            case 'linearised_convexified'
+               StabilisationFactor  =  1;
                [Solution,...
                    Optimisation]  =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
                                          FEM,Quadrature,Assembly,MatInfo,Optimisation,...
-                                         Bc,Solution,UserDefinedFuncs,TimeIntegrator,'~');
+                                         Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
+                                         '~',StabilisationFactor);
        end
     %----------------------------------------------------------------------
     % Explicit Newmark Beta solver
@@ -69,17 +78,18 @@ if Iteration==1
 end
 ObjFunc               =  ObjFunc/ObjFunc0; 
 %--------------------------------------------------------------------------
-% COMPUTE p (adjoint problem)     
+% COMPUTE p (adjoint problem)       
 %--------------------------------------------------------------------------  
-p                     =  TestFunctionOptimisationComputation(ObjFunc0,...
+[p,StabilisationFactor]  =  TestFunctionOptimisationComputation(ObjFunc0,...
                              Solution,Bc,NR,Geometry,Mesh,FEM,Quadrature,...
-                             Assembly,MatInfo,Optimisation,Data,TimeIntegrator,'~');
+                             Assembly,MatInfo,Optimisation,Data,...
+                             TimeIntegrator,'~',Iteration);
 %--------------------------------------------------------------------------
 % COMPUTE DERIVATIVE OF THE OBJECTIVE FUNCTION 
 %--------------------------------------------------------------------------  
 DIDrho                =  ComputeDerivativeObjectiveFunction(p,Mesh,...
                                  Optimisation,Solution,MatInfo,Geometry,...
-                                 NR,FEM,Quadrature,ObjFunc0,TimeIntegrator);
+                              NR,FEM,Quadrature,ObjFunc0,TimeIntegrator,StabilisationFactor);
 %--------------------------------------------------------------------------
 % SAVE AS WELL THE CONVERGED SOLUTION FOR THE NEXT OPTIMISATION ITERATION
 %--------------------------------------------------------------------------  

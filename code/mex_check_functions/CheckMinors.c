@@ -11,11 +11,7 @@ void perfomer(mwSize dim,
         const double *Matrix,
         double *minor)
 {
-//     for (mwSize i=0; i<dim*dim; ++i){
-//         minor[i]  =  Matrix[i];
-//     }
     minors_func(dim, Matrix, minor); /*a is a mxm matrix*/
-    //trisup(dim, dim, dim, Matrix, Matrix, minor);
 }
 
 /*-----------------------------------------------------------------------*/

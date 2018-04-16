@@ -9,4 +9,4 @@ NR.load_increments          =  15;
 
 NR.nonlinearity             =  'linearised_convexified';
 %NR.nonlinearity            =  'nonlinear';
-NR.instability_load_incr    =  15;
+NR.instability_load_incr    =  30;

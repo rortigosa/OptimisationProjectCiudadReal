@@ -33,18 +33,19 @@ for ielem=1:Mesh.volume.n_elem
     x_elem         =  x(:,connectivity(:,ielem));
     X_elem         =  X(:,connectivity(:,ielem));
     xo_elem        =  xold(:,connectivity(:,ielem));
-    xoo_elem       =  xoldold(:,connectivity(:,ielem));
+    %xoo_elem       =  xoldold(:,connectivity(:,ielem));
     p_elem         =  ptest(:,connectivity(:,ielem));
-    [Foo,Hoo,Joo]  =  KinematicsFunctionFinalMexC(xoo_elem,X_elem,DNX);
+    %[Foo,Hoo,Joo]  =  KinematicsFunctionFinalMexC(xoo_elem,X_elem,DNX);
     [Fo,Ho,Jo]     =  KinematicsFunctionFinalMexC(xo_elem,X_elem,DNX);
-    DF0            =  Fo - Foo;
+    %DF0            =  Fo - Foo;
     [DF,~,~]       =  KinematicsFunctionFinalMexC(x_elem-xo_elem,X_elem,DNX);
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    [Piola0,...
-        Elasticity0]    =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Foo,Hoo,Joo);
-    [~,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Fo,Ho,Jo);
+    %[Piola0,...
+    %    Elasticity0]    =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Foo,Hoo,Joo);
+    %[~,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Fo,Ho,Jo);
+    [Piola,Elasticity]      =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,Fo,Ho,Jo);
     
 %     if ~Geometry.PlaneStress
 %        [Piola0,...
@@ -64,18 +65,21 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Regularisation of the elasticity tensor 
     %----------------------------------------------------------------------
-    %Elasticity0      =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity0,ElasticityOrigin);        
-    %Elasticity       =  RegularisationElasticityMethod1(Geometry.dim,ngauss,Elasticity,ElasticityOrigin);    
-    Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
-    Elasticity      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);            
+    %Elasticity0     =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity0,ElasticityOrigin);        
+    %Elasticity      =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);            
+%     %Elasticity0     =  RegularisationElasticityMethodMatLab(Geometry.dim,ngauss,Elasticity0,ElasticityOrigin);    
+%     %Elasticity      =  RegularisationElasticityMethodMatLab(Geometry.dim,ngauss,Elasticity,ElasticityOrigin);    
+%     %Elasticity0        =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity0);    
+%     %Elasticity         =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity);    
     %----------------------------------------------------------------------
     % Piola in the solid 
     %----------------------------------------------------------------------    
-    H0u                 =  MatrixVectorMultiplication(Geometry.dim^2,ngauss,...
-                              Elasticity0,reshape(DF0,Geometry.dim^2,[]));
+    %H0u                 =  MatrixVectorMultiplication(Geometry.dim^2,ngauss,...
+    %                          Elasticity0,reshape(DF0,Geometry.dim^2,[]));
     Hu                  =  MatrixVectorMultiplication(Geometry.dim^2,ngauss,...
                               Elasticity,reshape(DF,Geometry.dim^2,[]));
-    Piola_solid         =  Piola0 + reshape(H0u + Hu,Geometry.dim,Geometry.dim,[]);
+    %Piola_solid         =  Piola0 + reshape(H0u + Hu,Geometry.dim,Geometry.dim,[]);
+    Piola_solid         =  Piola + reshape(Hu,Geometry.dim,Geometry.dim,[]);
     %----------------------------------------------------------------------
     % Determine if linear elasticity or nonlinear elasticity shall be applied
     % on the current element

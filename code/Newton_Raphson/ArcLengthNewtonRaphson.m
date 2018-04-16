@@ -24,7 +24,7 @@ Assembly                        =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mes
 %--------------------------------------------------------------------------
 % Cut-off density
 %--------------------------------------------------------------------------
-cutoff  =  0.1;
+cutoff  =  0.6;
 Optimisation.density(Optimisation.density>=cutoff) =  1;
 Optimisation.density(Optimisation.density<cutoff)  =  0;
 

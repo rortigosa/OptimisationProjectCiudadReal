@@ -54,12 +54,19 @@ gcc RegularisationElasticity2MexC.c -o RegularisationElasticity2MexC.mexw64 -sha
 
 
 gcc SylvesterCriterionElasticity2.c -o SylvesterCriterionElasticity2.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
-gcc RegularisationElasticity1MexC.c -o RegularisationElasticity1MexC_.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+gcc RegularisationElasticity1MexC.c -o RegularisationElasticity1MexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
 
 gcc CheckMinors.c -o CheckMinors.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
 gcc MooneyRivlinEnergyMexC.c -o MooneyRivlinEnergyMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
-
+77
 
 g++ MooneyRivlinPlaneStress.cpp -o MooneyRivlinPlaneStress.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
 g++ MooneyRivlinTransverseIsotropyTensionMexC.cpp -o MooneyRivlinTransverseIsotropyTensionMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
 
+
+gcc TangentOperatorUPhiFormulationMexC.c -o TangentOperatorUPhiFormulationMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+
+gcc MatrixScalarMultiplicationMexC.c -o MatrixScalarMultiplicationMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+gcc RegularisationParameterElasticityMexC.c -o RegularisationParameterElasticityMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+
+g++ MooneyRivlinIdealDielectricEnthalpyMexC.cpp -o MooneyRivlinIdealDielectricEnthalpyMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14

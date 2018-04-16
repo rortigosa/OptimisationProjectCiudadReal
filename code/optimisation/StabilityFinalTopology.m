@@ -1,4 +1,4 @@
-function StabilityFinalTopology(Optimisation,Data,NR,Geometry,Mesh,FEM,...
+function  Solution  =   StabilityFinalTopology(Optimisation,Data,NR,Geometry,Mesh,FEM,...
                      Quadrature,Assembly,MatInfo,Bc,Solution,UserDefinedFuncs,...
                      TimeIntegrator)
 
@@ -10,7 +10,7 @@ NR.nonlinearity             =  'nonlinear';
 %--------------------------------------------------------------------------
 % Extreme filter for densities
 %--------------------------------------------------------------------------
-cutoff  =  0.1;
+cutoff  =  0.6;
 Optimisation.density(Optimisation.density>=cutoff) =  1;
 Optimisation.density(Optimisation.density<cutoff)  =  0;
 %--------------------------------------------------------------------------

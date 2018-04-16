@@ -73,10 +73,10 @@ double AbsDouble(double scalar)
 
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
-/* This function computes the transpose of matrix*/
+/* This function computes the transpose of an mxn matrix matrix*/
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
-void transpose(const double *a, double *out, mwSize m, mwSize n)
+void transpose(const double *a, double *out, mwSize m, mwSize n) 
 {
     mwSize i, j;
     /* multiply each element y by x */
@@ -603,7 +603,8 @@ double Sylvester2(const double *Matrix, const double *MatrixStable, mwSize m)
     double *Temp_ = (double*)malloc(sizeof(double)*m*m);
     AbsVector(&MatrixStable[0], (size_t)m*m, Temp_);       
     zero_   =  sequential_maximum_vector(Temp_, (size_t)m*m);    
-    zero_   =  AbsDouble(zero_*1e-6)*(-1);
+    //zero_ =  AbsDouble(zero_*1e-6)*(-1);  // Not clear if it has to be positive or negative
+    zero_   =  AbsDouble(zero_*1e-6)*(1);  // Not clear if it has to be positive or negative
     /*-----------------------------------*/
     /*Compute the minors                 */
     /*-----------------------------------*/

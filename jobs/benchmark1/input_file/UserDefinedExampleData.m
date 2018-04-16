@@ -9,6 +9,7 @@ ExampleData.loads                  =  [0.03;0.1;0.3;0.6;1;2.6;5;10]*1e-3;
 
 ExampleData.loads                  =  [0.03;0.3;]*1e-3;
 ExampleData.loads                  =  [1.2;5]*1e-3;
+ExampleData.loads                  =  5e-3;
 %ExampleData.loads                  =  [10;30]*1e-3;
 % ExampleData.loads                  =  [30]*1e-3;
 
