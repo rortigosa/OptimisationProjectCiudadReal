@@ -26,8 +26,8 @@ switch geometry.type
           geometry.Ly   =  0.2;
 %          geometry.Nx   =  120*1;
 %          geometry.Ny   =  30*1;
-          geometry.Nx   =  120;
-          geometry.Ny   =  30;
+          geometry.Nx   =  120*1;
+          geometry.Ny   =  30*1;
           %geometry.Nx   =  120*1;
           %geometry.Ny   =  30*1;
           geometry.dim  =  2;

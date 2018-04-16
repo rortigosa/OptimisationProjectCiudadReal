@@ -14,12 +14,7 @@ void MooneyRivlin(double mu1,
         const double *F_m,
         const double *H_m,
         double J_m,
-        double *E0_m,
-        double *P_m,
-        double *D0_m,
-        double *Elasticity_m,
-        double *PiezoTensor_m,
-        double *DielTensor_m);
+        double *Elasticity_m);
 /*-----------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------*/
 /*C FUNCTION FOR 2D PROBLEMS*/
@@ -33,12 +28,7 @@ void MooneyRivlin<2>(double mu1,
         const double *F_m,
         const double *H_m,
         double J_m,
-        double *E0_m,
-        double *P_m,
-        double *D0_m,
-        double *Elasticity_m,
-        double *PiezoTensor_m,
-        double *DielTensor_m)
+        double *Elasticity_m)
 {
     /*-------------------------------------------------------------------*/
     /*Dimension of the problem*/
@@ -52,7 +42,6 @@ void MooneyRivlin<2>(double mu1,
     Tensor<double,ndim,1> E0;
     copy_matlab(F,F_m);
     copy_matlab(H,H_m);
-    copy_matlab(E0,E0_m);
     double J = J_m;
     /*-------------------------------------------------------------------*/    
     // IDENTITY SECOND ORDER TENSOR
@@ -88,22 +77,28 @@ void MooneyRivlin<2>(double mu1,
     Tensor<double,ndim,ndim,ndim,ndim> I_I      =  outer(Imatrix,Imatrix);               //delta_iI*delta_jJ 
     Tensor<double,ndim,ndim,ndim,ndim> I4D      =  permutation<Index<1,3,2,4>>(I_I);     //delta_ij*delta_IJ    
     Tensor<double,ndim,ndim,ndim,ndim> I4DT     =  permutation<Index<2,3,1,4>>(I_I);     //delta_iJ*delta_jI   
+    Tensor<double,ndim,ndim,ndim,ndim> D2H      =  I_I - I4DT;   //
 //     Tensor<double,ndim,ndim,ndim,ndim> I_E0E0   =  outer(E0_E0,Imatrix);                 //delta_iI*(E0xE0)_jJ
 //     Tensor<double,ndim,ndim,ndim,ndim> E0E0_I   =  outer(Imatrix,E0_E0);                 //(E0xE0)_iI*delta_jJ
 //     Tensor<double,ndim,ndim,ndim,ndim> E0E0_I4  =  permutation<Index<1,3,2,4>>(E0E0_I);  // (E0xE0)_ij*delta_IJ 
     /*-------------------------------------------------------------------*/    
     // ELASTICITY TENSOR
     /*-------------------------------------------------------------------*/            
+    Tensor<double,ndim,ndim,ndim,ndim> WFF  =  mu1*I4D;
+    Tensor<double,ndim,ndim,ndim,ndim> WHH  =  mu2*I4D;
+    double WJJ =  (mu1 + 2.*mu2)/(J*J) + lambda;    
+    
+     //double WJJ =  (mu1 + 2.*mu2)/(J*J) + lambda - epsilon/(J*J*J)*HE0_HE0_invariant;    
 //     Tensor<double,ndim,ndim,ndim,ndim> WFF  =  (mu1 + mu2)*I4D - epsilon/J*(E0_E0_invariant*I4 - I_E0E0 - E0E0_I + E0E0_I4);
-//     double WJJ =  (mu1 + 2.*mu2)/(J*J) + lambda + mu2 - epsilon/(J*J*J)*HE0_HE0_invariant;    
 //     Tensor<double,ndim,ndim>  WFJ = epsilon/(J*J)*(E0_HE0_invariant*Imatrix - E0_HE0);
 //     Tensor<double,ndim,ndim,ndim,ndim>  WFJ_H  =  outer(H,WFJ);
 //     Tensor<double,ndim,ndim,ndim,ndim>  H_WJF  =  transpose(WFJ_H);
 //         
-//     Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
-//     Tensor<double,ndim,ndim,ndim,ndim> C_Geom  =  WJ*(I_I - I4DT); 
-//    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  einsum<Index<1,2,3,4>,Index<3,4,5,6>>(I_I,I_I);
-    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  I_I;
+    Tensor<double,ndim,ndim,ndim,ndim> DH_WHH_DH = ensum<Index<1,2,3,4>,Index<3,4,5,6>,Index<5,6,7,8>>(D2H,)
+    Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
+    Tensor<double,ndim,ndim,ndim,ndim> C_Geom  =  WJ*(I_I - I4DT); 
+    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  einsum<Index<1,2,3,4>,Index<3,4,5,6>>(I_I,I_I);
+//    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  I_I;
 //    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  I4D;        
 //    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  WFF + WJJ*H_H + WFJ_H + H_WJF + C_Geom;    
     Tensor<double,ndim*ndim,ndim*ndim> Elasticity  =  reshape<ndim*ndim,ndim*ndim>(Elasticity4D);
@@ -137,12 +132,7 @@ void MooneyRivlin<3>(double mu1,
         const double *F_m,
         const double *H_m,
         double J_m,
-        double *E0_m,
-        double *P_m,
-        double *D0_m,
-        double *Elasticity_m,
-        double *PiezoTensor_m,
-        double *DielTensor_m)
+        double *Elasticity_m)
 {
     const mwSize  ndim  =  3;
     /*-------------------------------------------------------------------*/
@@ -212,19 +202,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double *F;               
     double *H;               
     double *J;               
-    double *E0;
     /*-------------------------------------------------------------------*/
     /* outputs                                                           */
     /*-------------------------------------------------------------------*/
-    double *P; 
-    double *D0;
     double *Elasticity;
-    double *PiezoTensor;
-    double *DielTensor;
     /*-------------------------------------------------------------------*/
     /* create a pointer to the real data in the input matrix  */
     /*-------------------------------------------------------------------*/        
-    dims_F               =  mxGetDimensions(prhs[3]);
+    dims_F               =  mxGetDimensions(prhs[4]);
     dim                  =  (size_t)dims_F[0];    
     ngauss               =  (size_t)dims_F[2];    
 
@@ -239,31 +224,24 @@ void mexFunction( int nlhs, mxArray *plhs[],
     F                    =  mxGetPr(prhs[4]);  
     H                    =  mxGetPr(prhs[5]);
     J                    =  mxGetPr(prhs[6]);
-    E0                   =  mxGetPr(prhs[7]);
     /*-------------------------------------------------------------------*/
     /* get a pointer to the real data in the output matrix */
     /*-------------------------------------------------------------------*/
-    mwSize PDims[3]      =  {dim,dim,ngauss};            
     mwSize ElastDims[3]  =  {dim*dim,dim*dim,ngauss};
-    plhs[0]              =  mxCreateNumericArray(3, PDims, mxDOUBLE_CLASS, mxREAL);   /*P*/
-    plhs[1]              =  mxCreateNumericArray(3, ElastDims, mxDOUBLE_CLASS, mxREAL);   /*P*/
-    P                    =  mxGetPr(plhs[0]);
-    D0                   =  mxGetPr(plhs[1]);
-    Elasticity           =  mxGetPr(plhs[2]);
-    PiezoTensor          =  mxGetPr(plhs[3]);
-    DielTensor           =  mxGetPr(plhs[4]);
+    plhs[0]              =  mxCreateNumericArray(3, ElastDims, mxDOUBLE_CLASS, mxREAL);   /*P*/
+    Elasticity           =  mxGetPr(plhs[0]);
     /*-------------------------------------------------------------------*/
     /* call the computational routine */
     /*-------------------------------------------------------------------*/
     mwSize igauss;
     if (dim==2){
        for (igauss=0; igauss<ngauss; ++igauss){
-           MooneyRivlin<2>(mu1,mu2,lambda,epsilon,&F[dim*dim*igauss],&H[dim*dim*igauss],J[igauss],&E0[dim*igauss],&P[dim*dim*igauss],&D0[dim*igauss],&Elasticity[dim*dim*dim*dim*igauss],&PiezoTensor[dim*dim*dim*igauss],&DielTensor[dim*dim*igauss]);
+           MooneyRivlin<2>(mu1,mu2,lambda,epsilon,&F[dim*dim*igauss],&H[dim*dim*igauss],J[igauss],&Elasticity[dim*dim*dim*dim*igauss]);
        }
     }
     else if (dim==3){
        for (igauss=0; igauss<ngauss; ++igauss){
-           MooneyRivlin<3>(mu1,mu2,lambda,epsilon,&F[dim*dim*igauss],&H[dim*dim*igauss],J[igauss],&E0[dim*igauss],&P[dim*dim*igauss],&D0[dim*igauss],&Elasticity[dim*dim*dim*dim*igauss],&PiezoTensor[dim*dim*dim*igauss],&DielTensor[dim*dim*igauss]);
+           MooneyRivlin<3>(mu1,mu2,lambda,epsilon,&F[dim*dim*igauss],&H[dim*dim*igauss],J[igauss],&Elasticity[dim*dim*dim*dim*igauss]);
        }    
     }
 }

@@ -22,14 +22,14 @@ dir_name   =  mfilename('fullpath');
 [jobfolder, results_folder]  =  JobFolderID(dir_name); 
 addpath(genpath(fullfile(jobfolder)));
 %--------------------------------------------------------------------------
-%  User-Defined Functions                           
+%  User-Defined Functions                            
 %--------------------------------------------------------------------------
 ExampleData                              =  UserDefinedExampleData;
 Optimisation                             =  UserDefinedOptimisation;
 [Data,TimeIntegrator]                    =  UserDefinedInitialData;
 [FEM,Quadrature]                         =  UserDefinedFEMGaussQuadrature;
 NR                                       =  UserDefinedNR; 
-    
+      
 UserDefinedFuncs.Geometry                =  @ GeometryPreprocessor;
 UserDefinedFuncs.MechanicalDirichletBCs  =  @ UserDefinedDirichlet;
 UserDefinedFuncs.NodalLoads              =  @ UserDefinedNodalLoads;
