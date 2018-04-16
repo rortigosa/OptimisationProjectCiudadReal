@@ -37,7 +37,7 @@ MatInfo                                  =  UserDefinedModel;
 %PostProc                                =  PostProcessingInstructions;
 PostProc                                 =  [];
 %--------------------------------------------------------------------------
-% Run Optimisation solver                        
+% Run Optimisation solver                                                 %                
 %--------------------------------------------------------------------------
 OptimisationSolver(ExampleData,Optimisation,Data,TimeIntegrator,FEM,Quadrature,NR,UserDefinedFuncs,MatInfo,PostProc,[jobfolder dirsep() results_folder]);
 
