@@ -12,12 +12,12 @@ function [p,StabilisationFactor]    =  TestFunctionOptimisationComputation(ObjFu
                              Contact,Iteration)
  
 StabilisationFactor        =  1;                         
-% if Solution.instability==1
-%    NR.nonlinearity          =  'linearised_convexified';
+if Solution.instability==1
+   NR.nonlinearity          =  'linearised_convexified';
 %    %Solution                 =  Solution.old; 
 %    Solution.x.Eulerian_x      =  Solution.old.x.Eulerian_x;
 %    Solution.old.x.Eulerian_x  =  Solution.old_old.x.Eulerian_x;
-% end
+end
                           
 %--------------------------------------------------------------------------
 % Compute remaining contributions 

@@ -8,5 +8,5 @@ NR.max_load_factor          =  1;
 NR.load_increments          =  15;
 
 NR.nonlinearity             =  'linearised_convexified';
-%NR.nonlinearity            =  'nonlinear';
+NR.nonlinearity            =  'nonlinear';
 NR.instability_load_incr    =  30;
