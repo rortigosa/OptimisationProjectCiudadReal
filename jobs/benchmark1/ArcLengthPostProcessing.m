@@ -108,7 +108,7 @@ for i=1:size(ControlOutPut,2)
   P(i)  =  ControlOutPut{i}.Input(1);
 end
 figure(1)
-plot(-u(1:40),-P(1:40),'-','LineWidth',4)
+plot(u(1:40),P(1:40),'-','LineWidth',4)
 hold on
 xx  =  linspace(min(-u(1:40)),max(-u(1:40)),100);
 yy  =  P1*ones(length(xx));

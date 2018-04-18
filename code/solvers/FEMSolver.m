@@ -47,6 +47,9 @@ switch TimeIntegrator.type
                                         Bc,Solution,UserDefinedFuncs,TimeIntegrator,'~');
            case 'linearised_convexified'
                StabilisationFactor  =  1;
+               if Iteration<50
+%                     NR.instability_load_incr  =  50;
+               end
                [Solution,...
                    Optimisation]  =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
                                          FEM,Quadrature,Assembly,MatInfo,Optimisation,...

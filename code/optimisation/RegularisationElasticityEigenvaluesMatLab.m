@@ -10,7 +10,7 @@ for igauss=1:ngauss
     Neg           =  find(eigvalue<0);
     for ineg=1:length(Neg)
         id   =  Neg(ineg);
-        ElasticityReg(:,:,igauss)  =  ElasticityReg(:,:,igauss) -  eigvalue(id,id)*(eigvector(:,id)*eigvector(:,id)');
+        ElasticityReg(:,:,igauss)  =  ElasticityReg(:,:,igauss) -  eigvalue(id,id)*(1 + 1e-2)*(eigvector(:,id)*eigvector(:,id)');
     end
     
 end

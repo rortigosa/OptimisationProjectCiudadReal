@@ -56,10 +56,10 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Regularisation of the elasticity tensor  
     %----------------------------------------------------------------------
-    %Elasticity            =  RegularisationElasticity1MexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);        
-    alpha                =  RegularisationParameterElasticityMexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);        
+    alpha                =  RegularisationParameterElasticityMexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);            
     ElasticityReg        =  MatrixScalarMultiplicationMexC(Geometry.dim^2,ngauss,Imatrix,alpha);    
-    Elasticity           =  Elasticity + StabilisationFactor*ElasticityReg;
+    Elasticity           =  Elasticity + 1.5*StabilisationFactor*ElasticityReg;
+    %Elasticity          =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity);
     %----------------------------------------------------------------------
     % Compute residuals and stiffness matrix for the nonlinear model
     %----------------------------------------------------------------------       

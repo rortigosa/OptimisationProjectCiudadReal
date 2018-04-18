@@ -18,7 +18,7 @@ Assembly                      =  MassDampingMatrix(Mesh,Geometry,Solution,...
 %--------------------------------------------------------------------------
 % Select Time integration parameters 
 %--------------------------------------------------------------------------                             
-Dt                            =  3e-2;
+Dt                            =  6e-4;
 TimeIntegrator.Dt             =  Dt;                             
 Assembly.total_matrix         =  1/Dt^2*Assembly.MassMatrix + ...
                                  1/(2*Dt)*Assembly.DampingMatrix;                             
@@ -54,7 +54,7 @@ U00                           =  U0 - ...
 %--------------------------------------------------------------------------
 EnergyCriterion  =  1;
 %while EnergyCriterion 
-while TimeStep<3000
+while TimeStep<10000
     %----------------------------------------------------------------------
     % Update solution fields with those of the previous load increment
     %----------------------------------------------------------------------
@@ -120,7 +120,7 @@ while TimeStep<3000
 
     if isnan(norm(Solution.x.velocity))
        fprintf('Unstable solution') 
-    end
+    end 
 end
 
 Solution.instability  =  0;

@@ -43,12 +43,16 @@ while accumulated_factor<1-1e-6
     %----------------------------------------------------------------------
     % Incremental variables for the load increment strategy.
     %----------------------------------------------------------------------
-    NR.accumulated_factor   =  NR.accumulated_factor + NR.load_factor;
-    accumulated_factor      =  NR.accumulated_factor;
     Assembly                =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mesh,...
                                         FEM,Quadrature,Assembly,MatInfo,...
                                         Optimisation,Solution,TimeIntegrator,...
                                         StabilisationFactor);
+%     [Assembly,~,NIncrements] =  StabilisationTuningProcedure(Contact,Solution,Bc,NR,...
+%                                     Data,Geometry,Mesh,FEM,Quadrature,Assembly,...
+%                                     MatInfo,Optimisation,TimeIntegrator,'Solution');                                    
+%     NR.load_factor          =  min((1 - accumulated_factor),1/NIncrements);                             
+    NR.accumulated_factor   =  NR.accumulated_factor + NR.load_factor;
+    accumulated_factor      =  NR.accumulated_factor;
     %----------------------------------------------------------------------
     % Update Dirichlet boundary conditions.   
     %----------------------------------------------------------------------

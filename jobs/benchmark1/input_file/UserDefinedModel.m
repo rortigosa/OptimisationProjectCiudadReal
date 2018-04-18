@@ -11,6 +11,9 @@ lambda0                        =  E0*nu0/((1 + nu0)*(1 - 2*nu0));
 % Chose material parameters for the different models
 %--------------------------------------------------------------------------
 mat_info.model                 =  'MooneyRivlin';
+%mat_info.model                 =  'NeoHookean';
+%mat_info.model                 =  'ArrudaBoyce';
+mat_info.density               =  1;
 switch mat_info.model
     case 'MooneyRivlin'
         %------------------------------------------------------------------
