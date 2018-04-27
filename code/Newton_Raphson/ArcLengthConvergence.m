@@ -6,9 +6,11 @@
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-function [NR,AL,...
-    Residual_dimensionless,assembly]  =  ArcLengthConvergence(NR,assembly,bc,AL)
+function [NR,AL,Residual_dimensionless,...
+    assembly,stopping_condition]  =  ArcLengthConvergence(NR,assembly,bc,AL)
  
+
+stopping_condition  =  1;
 %--------------------------------------------------------------------------
 % Initialise the dimensionless residual
 %--------------------------------------------------------------------------
@@ -61,11 +63,20 @@ if NR.iteration>6
 end
 if NR.nonconvergence_criteria==0
    if NR.iteration<=3
-      if AL.fail==0  && AL.radius<0.5
+%      if AL.fail==0  && AL.radius<0.5
+      if AL.fail==0
          AL.radius                    =  AL.radius*2;    
       end
    end
 end
+
+if NR.nonconvergence_criteria==0
+   if (NR.accumulated_factor-1)>0 && (NR.accumulated_factor-1)<=(AL.max_accumulated_factor-1)
+      AL.fail            =  0; 
+      stopping_condition = 0; % Stop the arc-length
+   end
+end
+
 if AL.fail==1
    NR.nonconvergence_criteria         =  1; 
 end

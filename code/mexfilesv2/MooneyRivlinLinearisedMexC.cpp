@@ -54,7 +54,7 @@ void MooneyRivlin<2>(double mu1,
     /*-------------------------------------------------------------------*/
     // COMPUTE FIRST PIOLA STRESS TENSOR    
     /*-------------------------------------------------------------------*/
-    Tensor<double,ndim,ndim> P   =  WF + WJ*(H/3);    
+    Tensor<double,ndim,ndim> P   =  WF + WJ*(H/2);    
     /*-------------------------------------------------------------------*/    
     // Auxiliary tensors and variables needed
     /*-------------------------------------------------------------------*/    
@@ -65,9 +65,9 @@ void MooneyRivlin<2>(double mu1,
     Tensor<double,ndim,ndim,ndim,ndim> WFF  =  (mu1 + mu2)*I4D;
     double WJJ =  (mu1 + 2*mu2)/(J*J) + lambda + mu2;    
     
-    Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H/3.,H/3.);        
+    Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
 
-    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  WFF + WJJ*H_H;    
+    Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  WFF + (1/4.)*WJJ*H_H;    
     Tensor<double,ndim*ndim,ndim*ndim> Elasticity  =  reshape<ndim*ndim,ndim*ndim>(Elasticity4D);
     /*-------------------------------------------------------------------*/    
     // Copy back from Fastor to C*

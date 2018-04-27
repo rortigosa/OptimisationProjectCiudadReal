@@ -11,7 +11,7 @@ void perfomer(mwSize dim,
         mwSize ngauss,
         mwSize n_node_elem,
         const double *x_elem,
-        const double *xstar_elem
+        const double *xstar_elem,
         const double *X_elem,
         const double *DNX,
         double *F,
@@ -51,8 +51,8 @@ void perfomer(mwSize dim,
         /*---------------------------------------------------------------*/
         cofactor(&Fstar[dim*dim*igauss],&Hstarstar[dim*dim*igauss],dim);                
         piolaHFunction(&F[dim*dim*igauss],&Fstar[dim*dim*igauss],&Hstar[dim*dim*igauss],dim);                
-        Jstar_         =  scalar_product(&F[dim*dim*igauss],&HstarHstar[dim*dim*igauss],dim*dim);        
-        Jstar[igauss]  =  Jstar_/3.;                
+        Jstar_         =  scalar_product(&F[dim*dim*igauss],&Hstarstar[dim*dim*igauss],dim*dim);        
+        Jstar[igauss]  =  Jstar_/2.;                
     }
     /*-------------------------------------------------------------------*/
     /* Free temporaries*/
@@ -89,13 +89,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     /*-------------------------------------------------------------------*/
     /* create a pointer to the real data in the input matrix  */
     /*-------------------------------------------------------------------*/
-    dims_DNX           =  mxGetDimensions(prhs[2]);
+    dims_DNX           =  mxGetDimensions(prhs[3]);
     dim                =  (size_t)dims_DNX[0];    
     n_node_elem        =  (size_t)dims_DNX[1];    
     ngauss             =  (size_t)dims_DNX[2];    
     x_elem             =  mxGetPr(prhs[0]);   
-    X_elem             =  mxGetPr(prhs[1]);
-    DNX                =  mxGetPr(prhs[2]);
+    xstar_elem         =  mxGetPr(prhs[1]);   
+    X_elem             =  mxGetPr(prhs[2]);
+    DNX                =  mxGetPr(prhs[3]);
     /*-------------------------------------------------------------------*/
     /* Get a pointer to the real data in the output matrix */
     /*-------------------------------------------------------------------*/

@@ -70,3 +70,44 @@ gcc MatrixScalarMultiplicationMexC.c -o MatrixScalarMultiplicationMexC.mexw64 -s
 gcc RegularisationParameterElasticityMexC.c -o RegularisationParameterElasticityMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
 
 g++ MooneyRivlinIdealDielectricEnthalpyMexC.cpp -o MooneyRivlinIdealDielectricEnthalpyMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
+
+g++ MooneyRivlinIdealDielectricEnthalpyMexCTrial.cpp -o MooneyRivlinIdealDielectricEnthalpyMexCTrial.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG -I"C:\SoftwareDevelopment\Fastor-master" -std=c++14
+gcc AssemblyCentralDifferenceLinearUFormulationMexC.c -o AssemblyCentralDifferenceLinearUFormulationMexC.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+gcc CheckIntMatrix.c -o CheckIntMatrix.mexw64 -shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+
+
+
+gfortran -O3 system_blasMin.f system_ddeps.f system_mi24d.f TestSolver.f90 -o salida      
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -shared -L"C:/SoftwareDevelopment/OptimisationProjectCiudadReal/code/solvers" -lopenblas     
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -shared -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers" -lopenblas     
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\libopenblas.a"
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib" -lopenblas
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib" -lopenblas
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib\libopenblas.a C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib\libopenblas.dll.a C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\bin\libopenblas.dll
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib" -lopenblas -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\bin" -lopenblas
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\lib" -lopenblas
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\bin" -lopenblas
+
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida C:/SoftwareDevelopment/OptimisationProjectCiudadReal/code/solvers/OpenBLAS-v0.2.19-Win64-int32/bin/libopenblas.dll
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -lopenblas
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida C:/SoftwareDevelopment/OptimisationProjectCiudadReal/code/solvers/OpenBLAS-v0.2.19-Win64-int32/bin/libopenblas.dll
+
+
+
+-shared -I"C:\Program Files\MATLAB\R2015b\extern\include" -I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include" -L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64"
+
+-I"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\include"
+-L"C:\Program Files\MATLAB\R2015b\bin\win64" -lmex -lmat -leng -lmx -L"C:\Program Files\MATLAB\R2015b\extern\lib\win64\mingw64" -lmwblas -O3 -march=native -DNDEBUG
+
+
+
+
+gfortran -O3 system_ddeps.f system_mi24d.f TestSolver.f90 -o salida -L"C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers\OpenBLAS-v0.2.19-Win64-int32\bin" -lopenblas
+

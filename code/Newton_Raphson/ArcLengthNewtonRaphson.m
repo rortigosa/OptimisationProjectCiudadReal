@@ -40,7 +40,7 @@ stopping_condition              =  1;
 NFails                          =  0;
 while (stopping_condition  ||  AL.fail==1)
     %----------------------------------------------------------------------
-    % Initialisation variables  
+    % Initialisation variables   
     %----------------------------------------------------------------------    
     NR.iteration                =  0;
     AL.iteration                =  AL.iteration + 1;
@@ -62,7 +62,7 @@ while (stopping_condition  ||  AL.fail==1)
                                         FEM,Quadrature,Assembly,MatInfo,...
                                         Optimisation,Solution,TimeIntegrator);    
        AL.fail                  =  0;
-       AL.iteration             =  old_AL.iteration;
+       AL.iteration             =  old_AL.iteration + 1;
        NR.iteration             =  0;
     end
     if NFails>20

@@ -8,7 +8,7 @@
 %--------------------------------------------------------------------------
 
 function [Kxx,Elasticity]     =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
-                                                Quadrature,MatInfo)
+                                                Quadrature,MatInfo,Geometry)
 
 DN_chi           =  FEM.volume.bilinear.x.DN_chi;
 X                =  Solution.x.Lagrangian_X;
@@ -23,12 +23,13 @@ Weight           =  Quadrature.volume.bilinear.W_v;
 %--------------------------------------------------------------------------
 % Compute Piola and the Elasticity tensor for the nonlinear model
 %--------------------------------------------------------------------------
-[~,Elasticity]  =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
-                                    MatInfo.lambda,F,H,J);
+[~,Elasticity]   =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
+% [~,Elasticity] =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
+%                                     MatInfo.lambda,F,H,J);
 %--------------------------------------------------------------------------
-% Compute the stiffness matrix for the nonlinear model
+% Compute the stiffness matrix for the nonlinear model 
 %--------------------------------------------------------------------------
-Kxx                   =  TangentOperatorUFormulationMexC(DNX,Elasticity,IntWeight);
+Kxx              =  TangentOperatorUFormulationMexC(DNX,Elasticity,IntWeight);
 
 
 

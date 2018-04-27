@@ -95,10 +95,11 @@ NR.accumulated_factor  =  NR.accumulated_factor + gamma;
 if isnan(NR.accumulated_factor)
    AL.fail             =  1; 
 end
-% %--------------------------------------------------------------------------
-% % Stop also the arc-length when the acuumulated factor is larger than 1.
-% %--------------------------------------------------------------------------
-% if NR.accumulated_factor>1
-%    AL.fail             =  1; 
-% end
-    
+%--------------------------------------------------------------------------
+% Stop also the arc-length when the acuumulated factor is larger than 1.
+%--------------------------------------------------------------------------
+if isfield(AL,'max_accumulated_factor')
+   if NR.accumulated_factor>AL.max_accumulated_factor
+      AL.fail          =  1; 
+   end
+end    

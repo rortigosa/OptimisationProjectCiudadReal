@@ -33,7 +33,7 @@ Assembly          =  SparseIndicesUFormulation(Geometry.dim,Mesh);
 % (no deformations)
 %--------------------------------------------------------------------------
 [K,Elasticity]                =  ElementStiffnessSolidOrigin(FEM,Solution,Mesh,...
-                                                 Quadrature,MatInfo);
+                                                 Quadrature,MatInfo,Geometry);
 MatInfo.Klinear           =  K;
 MatInfo.ElasticityLinear  =  Elasticity;
 %--------------------------------------------------------------------------

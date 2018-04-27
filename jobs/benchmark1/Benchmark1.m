@@ -22,14 +22,14 @@ dir_name   =  mfilename('fullpath');
 [jobfolder, results_folder]  =  JobFolderID(dir_name); 
 addpath(genpath(fullfile(jobfolder)));
 %--------------------------------------------------------------------------
-%  User-Defined Functions                                
+%  User-Defined Functions                                       
 %--------------------------------------------------------------------------
 ExampleData                              =  UserDefinedExampleData;
 Optimisation                             =  UserDefinedOptimisation;
 [Data,TimeIntegrator]                    =  UserDefinedInitialData;
 [FEM,Quadrature]                         =  UserDefinedFEMGaussQuadrature;
 NR                                       =  UserDefinedNR; 
-      
+        
 UserDefinedFuncs.Geometry                =  @ GeometryPreprocessor;
 UserDefinedFuncs.MechanicalDirichletBCs  =  @ UserDefinedDirichlet;
 UserDefinedFuncs.NodalLoads              =  @ UserDefinedNodalLoads;
@@ -37,7 +37,9 @@ MatInfo                                  =  UserDefinedModel;
 %PostProc                                =  PostProcessingInstructions;
 PostProc                                 =  [];
 %--------------------------------------------------------------------------
-% Run Optimisation solver                                                  %                
+% Run Optimisation solver                                                 %                
 %--------------------------------------------------------------------------
-OptimisationSolver(ExampleData,Optimisation,Data,TimeIntegrator,FEM,Quadrature,NR,UserDefinedFuncs,MatInfo,PostProc,[jobfolder dirsep() results_folder]);
+OptimisationSolver(ExampleData,Optimisation,Data,TimeIntegrator,FEM,...
+                   Quadrature,NR,UserDefinedFuncs,MatInfo,PostProc,...
+                   [jobfolder dirsep() results_folder]);
 

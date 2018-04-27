@@ -8,5 +8,6 @@ NR.max_load_factor          =  1;
 NR.load_increments          =  [3;30];
 
 NR.nonlinearity             =  'nonlinear';
+NR.nonlinearity             =  'arclength';
 %NR.nonlinearity             =  'linearised_convexified';
-NR.instability_load_incr    =  8;
+NR.instability_load_incr    =  5;

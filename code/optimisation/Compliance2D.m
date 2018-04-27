@@ -69,7 +69,7 @@ while (change > user_change)  && (loop < 301)
     loopbeta           =  loopbeta+1;
     loop               =  loop+1;
     xval               =  x;
-    xold               =  x;    
+    xold               =  x;     
     %----------------------------------------------------------------------
     % FE-ANALYSIS: OBTAIN OBJECTIVE FUNCTION (c) AND ITS DERIVATIVE (dc) 
     %----------------------------------------------------------------------
@@ -127,7 +127,7 @@ while (change > user_change)  && (loop < 301)
                           Quadrature,Optimisation,PostProc,iteration,ObjFunc,...
                           Data,NR,Assembly,Bc,UserDefinedFuncs,TimeIntegrator);
     %----------------------------------------------------------------------            
-    % SAVING RESULTS
+    % SAVING RESULTS 
     %----------------------------------------------------------------------            
     SaveMatLab(iteration,dir,Optimisation,Geometry,Data,TimeIntegrator,...
                FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...

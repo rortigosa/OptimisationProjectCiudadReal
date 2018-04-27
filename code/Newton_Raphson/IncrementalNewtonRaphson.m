@@ -69,6 +69,11 @@ if load_iteration>length(NR.load_increments)
     [Solution,...
         Optimisation]     =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
                                 FEM,Quadrature,Assembly,MatInfo,Optimisation,...
-                                Bc,Solution,UserDefinedFuncs,TimeIntegrator,Contact,1);
+                                Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
+                                Contact,1,1);
     Solution.instability  =  1;
-end
+end    
+
+
+
+

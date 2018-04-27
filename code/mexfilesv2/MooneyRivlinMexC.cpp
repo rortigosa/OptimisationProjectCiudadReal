@@ -29,7 +29,6 @@ void MooneyRivlin<2>(double mu1,
         double J_m,
         double *P_m,
         double *Elasticity_m)
-        /*THIS IS NOT FINISHED*/
 {
     /*-------------------------------------------------------------------*/
     /*Dimension of the problem*/
@@ -51,7 +50,7 @@ void MooneyRivlin<2>(double mu1,
     // COMPUTE FIRST DERIVATIVES OF THE MODEL    
     /*-------------------------------------------------------------------*/
     Tensor<double,ndim,ndim> WF  =  (mu1 + mu2)*F;
-    double WJ =  -(mu1 + 2*mu2)/J + lambda*(J - 1.) + mu2*J;    
+    double WJ =  -(mu1 + 2.*mu2)/J + lambda*(J - 1.) + mu2*J;    
     /*-------------------------------------------------------------------*/
     // COMPUTE FIRST PIOLA STRESS TENSOR    
     /*-------------------------------------------------------------------*/
@@ -64,7 +63,7 @@ void MooneyRivlin<2>(double mu1,
     Tensor<double,ndim,ndim,ndim,ndim> I4DT  =  permutation<Index<2,3,1,4>>(I_I);    
  
     Tensor<double,ndim,ndim,ndim,ndim> WFF  =  (mu1 + mu2)*I4D;
-    double WJJ =  (mu1 + 2*mu2)/(J*J) + lambda + mu2;    
+    double WJJ =  (mu1 + 2.*mu2)/(J*J) + lambda + mu2;    
     
     Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
     Tensor<double,ndim,ndim,ndim,ndim> C_Geom  =  WJ*(I_I - I4DT); 
@@ -110,7 +109,7 @@ void MooneyRivlin<3>(double mu1,
     /*-------------------------------------------------------------------*/
     Tensor<double,ndim,ndim> WF  =  mu1*F;
     Tensor<double,ndim,ndim> WH  =  mu2*H;
-    double WJ =  -(mu1 + 2*mu2)/J + lambda*(J - 1.);    
+    double WJ =  -(mu1 + 2.*mu2)/J + lambda*(J - 1.);    
     /*-------------------------------------------------------------------*/
     // COMPUTE FIRST PIOLA STRESS TENSOR    
     /*-------------------------------------------------------------------*/
@@ -118,19 +117,19 @@ void MooneyRivlin<3>(double mu1,
     /*-------------------------------------------------------------------*/    
     // Auxiliary tensors and variables needed
     /*-------------------------------------------------------------------*/    
-    Tensor<double,ndim,ndim,ndim,ndim> I_I  =  outer(Imatrix,Imatrix);
-    Tensor<double,ndim,ndim,ndim,ndim> I4D  =  permutation<Index<1,3,2,4>>(I_I);    
- 
+    Tensor<double,ndim,ndim,ndim,ndim> I_I   =  outer(Imatrix,Imatrix);
+    Tensor<double,ndim,ndim,ndim,ndim> I4D   =  permutation<Index<1,3,2,4>>(I_I);    
+    
     Tensor<double,ndim,ndim,ndim,ndim> WFF  =  mu1*I4D;
     Tensor<double,ndim,ndim,ndim,ndim> WHH  =  mu2*I4D;
-    double WJJ =  (mu1 + 2*mu2)/(J*J) + lambda;    
+    double WJJ =  (mu1 + 2.*mu2)/(J*J) + lambda;    
     
     Tensor<double,ndim,ndim,ndim,ndim> F_WHH_F  =  cross(cross(F,WHH),F);
     Tensor<double,ndim,ndim,ndim,ndim> H_H  =  outer(H,H);        
-
+     
     Tensor<double,ndim,ndim>  Geom  =  WH + WJ*F;
     Tensor<double,ndim,ndim,ndim,ndim> C_Geom  =  cross(Geom,I4D); 
-
+     
     Tensor<double,ndim,ndim,ndim,ndim> Elasticity4D  =  WFF + F_WHH_F + WJJ*H_H + C_Geom;    
     Tensor<double,ndim*ndim,ndim*ndim> Elasticity  =  reshape<ndim*ndim,ndim*ndim>(Elasticity4D);
     /*-------------------------------------------------------------------*/    

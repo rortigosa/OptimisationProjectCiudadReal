@@ -1,0 +1,14 @@
+1. Fortran compiler is within mingw-64 (C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin)
+
+2. Set environment variables: ThisPc\properties\advanced_settings\Environmenta Variables\Path\add new\Copy this:C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
+
+3. Copy resolution files from hsl libraries. For MI24 solver, these files are: system_mi24d and system_ddeps.f 
+
+4. Install blas library. This requires the following steps (from link https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio)
+
+   4.1 Download OpenBlas library (OpenBLAS-v0.2.19-Win64-int32. This is currently in the folder:C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code\solvers).
+   
+   4.2 Install MSYS (shell)
+
+   4.3 Go to 
+
