@@ -7,7 +7,7 @@
 %--------------------------------------------------------------------------
 
 function [NR,AL,Residual_dimensionless,...
-    assembly,stopping_condition]  =  ArcLengthConvergence(NR,old_NR,assembly,bc,AL)
+    assembly,stopping_condition]  =  ArcLengthConvergence(NR,assembly,bc,AL)
  
 
 stopping_condition  =  1;
@@ -69,27 +69,28 @@ if NR.nonconvergence_criteria==0
       end
    end
 end
-
+%--------------------------------------------------------------------------
+% If the accumulated factor reaches 1, then stop it
+%--------------------------------------------------------------------------
 if NR.nonconvergence_criteria==0
-   %-----------------------------------------------------------------------
-   % If the accumulated foactor reaches 1, then stop it
-   %-----------------------------------------------------------------------
    if (NR.accumulated_factor-1)>0 && (NR.accumulated_factor-1)<=(AL.max_accumulated_factor-1)
       AL.fail            =  0; 
       stopping_condition = 0; % Stop the arc-length
-   %-----------------------------------------------------------------------
-   % Obtain a good estimate of the critical load
-   %-----------------------------------------------------------------------
-   else
-      if AL.iteration>10
-         if (NR.accumulated_factor-old_NR.accumulated_factor)<AL.min_diff_accumulated_factor && abs(NR.accumulated_factor - old_NR.accumulated_factor)<abs(1-AL.max_accumulated_factor)
-            stopping_condition  =  0;
-            AL.fail             =  1;
-         end
-      end
    end
 end
+%--------------------------------------------------------------------------
+% Obtain a good estimate of the critical load
+%--------------------------------------------------------------------------
+if NR.nonconvergence_criteria==0
+   if (NR.accumulated_factor-1)>0 && (NR.accumulated_factor-1)<=(AL.max_accumulated_factor-1)
+      AL.fail            =  0; 
+      stopping_condition = 0; % Stop the arc-length
+   end
+end
+
 
 if AL.fail==1
    NR.nonconvergence_criteria         =  1; 
 end
+
+

@@ -104,7 +104,22 @@ colormap(gray); imagesc(1-xPhys); caxis([0 1]); axis equal; axis off; drawnow;
 %--------------------------------------------------------------------------
 %subplot(3,2,5)
 subplot(3,1,3)
+PostProc.instability(iteration)  =  0;
+if Solution.instability
+   PostProc.instability(iteration)  =  1;
+end    
 plot(ObjFunc(1:iteration),'-o','MarkerSize',2,'LineWidth',2);
+for iter=1:iteration
+    if PostProc.instability(iteration)
+       Y         =  ylim;
+       ymin      =  Y(1);
+       ymax      =  Y(2);
+       xins      =  [iter;  iter];
+       yins      =  [(ymin+ymax)/2; ymax];
+       plot(xins,yins,'--')
+       hold on
+    end
+end
 PostProc.ObjFunc  =  ObjFunc;
 grid on
 % %--------------------------------------------------------------------------
