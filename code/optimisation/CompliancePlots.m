@@ -110,7 +110,7 @@ if Solution.instability
 end    
 plot(ObjFunc(1:iteration),'-o','MarkerSize',2,'LineWidth',2);
 for iter=1:iteration
-    if PostProc.instability(iteration)
+    if PostProc.instability(iter)
        Y         =  ylim;
        ymin      =  Y(1);
        ymax      =  Y(2);

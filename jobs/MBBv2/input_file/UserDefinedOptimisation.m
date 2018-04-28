@@ -21,7 +21,7 @@ switch Optimisation.method
          Optimisation.density      =  [];  %  Density in the SIMP
          Optimisation.void_factor  =  1e-6;
          
-         Optimisation.Volfrac      =  0.4;
+         Optimisation.Volfrac      =  0.2;
          Optimisation.rmin         =  2;
          
 end

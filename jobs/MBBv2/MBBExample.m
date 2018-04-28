@@ -22,7 +22,7 @@ dir_name   =  mfilename('fullpath');
 [jobfolder, results_folder]  =  JobFolderID(dir_name); 
 addpath(genpath(fullfile(jobfolder)));
 %--------------------------------------------------------------------------
-%  User-Defined Functions                
+%  User-Defined Functions                 
 %--------------------------------------------------------------------------
 ExampleData                              =  UserDefinedExampleData;
 Optimisation                             =  UserDefinedOptimisation;

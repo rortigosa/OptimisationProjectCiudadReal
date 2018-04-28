@@ -7,6 +7,8 @@ AL.radius                       =  0.005;
 AL.fail                         =  0;
 AL.iteration                    =  0;
 NR.accumulated_factor           =  0.01;
+AL.max_accumulated_factor       =  10;
+AL.min_diff_accumulated_factor  =  0;
 %--------------------------------------------------------------------------
 % Initialisation of the formulation
 %--------------------------------------------------------------------------
@@ -114,10 +116,10 @@ while (stopping_condition  ||  AL.fail==1)
         %------------------------------------------------------------------
         Assembly    =  ArcLengthResidualUpdate(Geometry.dim,Data.formulation,Mesh,UserDefinedFuncs,Bc,Assembly,NR);        
         %------------------------------------------------------------------
-        % checking for convergence.                                                                                                                       
+        % checking for convergence.                                                                                                                        
         %------------------------------------------------------------------
         [NR,AL,Residual_dimensionless,...
-            Assembly]           =  ArcLengthConvergence(NR,Assembly,Bc,AL);
+            Assembly]           =  ArcLengthConvergence(NR,NR,Assembly,Bc,AL);
         %------------------------------------------------------------------
         % screen ouput for current Newton-Raphson iteration.                                   
         %------------------------------------------------------------------
@@ -187,5 +189,4 @@ end
 % Solution.x.Eulerian_x  =  Solution.x.Lagrangian_X + ...
 %                              (1/NR.accumulated_factor)*(Solution.x.Eulerian_x - Solution.x.Lagrangian_X);
 % end
-%     
-    
+%         
