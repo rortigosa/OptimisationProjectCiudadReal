@@ -122,19 +122,23 @@ while stopping_condition
 end                 
 
 Solution.instability  =  0;
-%--------------------------------------------------------------------------
-% Save solution field
-%--------------------------------------------------------------------------
-%if AL.fail
-    Solution              =  old_solution;
-    NR                    =  old_NR;
-    %----------------------------------------------------------------------
-    % Convexified unstable problem
-    %----------------------------------------------------------------------
-    [Solution,...
-        Optimisation]     =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
-                                FEM,Quadrature,Assembly,MatInfo,Optimisation,...
-                                Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
-                                '~',1,0);
-    Solution.instability     =  1;
-%end    
+% %--------------------------------------------------------------------------
+% % Save solution field
+% %--------------------------------------------------------------------------
+% %if AL.fail
+%     Solution              =  old_solution;
+%     NR                    =  old_NR;
+%     %----------------------------------------------------------------------
+%     % Convexified unstable problem
+%     %----------------------------------------------------------------------
+%     [Solution,...
+%         Optimisation]     =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
+%                                 FEM,Quadrature,Assembly,MatInfo,Optimisation,...
+%                                 Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
+%                                 '~',1,0);
+%     Solution.instability     =  1;
+% %end    
+% 
+
+
+
