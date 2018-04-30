@@ -1,0 +1,12 @@
+dim           =  2;
+n_node_elem   =  4;
+n_nodes       =  5;
+n_elem        =  20;
+void_factor   =  0.1;
+rho_p         =  rand(n_elem,1);
+connectivity  =  randi(n_nodes,n_node_elem,n_elem);
+x             =  rand(dim,n_nodes);
+X             =  rand(dim,n_nodes);
+Klinear       =  rand(dim*n_node_elem,dim*n_node_elem);
+
+TInternal = AssemblyCentralDifferenceLinearUFormulationMexC5(dim,n_node_elem,n_nodes,n_elem,void_factor,rho_p,connectivity,x,X,Klinear);

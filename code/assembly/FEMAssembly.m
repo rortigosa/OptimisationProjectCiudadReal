@@ -29,7 +29,7 @@ switch TimeIntegrator.type
                         %--------------------------------------------------
                         % Non-linear and linearised elasticity
                         %--------------------------------------------------
-                    case {'nonlinear','arclength'}
+                    case {'nonlinear','arclength','linearised_arclength'}
                         Assembly =  InternalWorkUAssemblyMexFilesv2(Data.formulation,...
                                         Geometry,Mesh,FEM,Quadrature,Assembly,...
                                         MatInfo,Optimisation,Solution);

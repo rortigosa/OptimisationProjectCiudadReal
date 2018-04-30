@@ -19,7 +19,7 @@ switch Optimisation.method
     case 'SIMP'
          Optimisation.penalty      =  3;   %  Penalty in the SIMP
          Optimisation.density      =  [];  %  Density in the SIMP
-         Optimisation.void_factor  =  1e-6;
+         Optimisation.void_factor  =  1e-4;
          
          Optimisation.Volfrac      =  0.2;
          Optimisation.rmin         =  2;

@@ -14,4 +14,13 @@ reduced_matrix(:,fixdof)    =  [];
 %--------------------------------------------------------------------------
 % Incremental solution
 %--------------------------------------------------------------------------
+% tic
 dU(freedof)                 =  reduced_matrix\R(freedof,1); 
+% toc
+% tic
+% eigs(reduced_matrix);
+% toc 
+% tic
+% [v,c]=eigs(reduced_matrix,20,'sm');
+% toc
+% asdf=98

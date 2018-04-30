@@ -38,7 +38,7 @@ end
 %--------------------------------------------------------------------------
 % First convergence criterion (based on the Residual)
 %--------------------------------------------------------------------------
-NR.nonconvergence_criteria            =  norm(assembly.Residual(bc.Dirichlet.freedof))>NR.tolerance;
+NR.nonconvergence_criteria            =  norm(assembly.Residual(bc.Dirichlet.freedof))/norm(bc.Neumann.force_vector)>NR.tolerance;
 if NR.nonconvergence_criteria==0
     if  NR.iteration<0 
         NR.nonconvergence_criteria    =  1;
@@ -58,7 +58,7 @@ end
 %--------------------------------------------------------------------------
 % Maximum number of iterations reached.  
 %--------------------------------------------------------------------------
-if NR.iteration>6
+if NR.iteration>AL.max_number_AL_iterations
    AL.fail                            =  1;
 end
 if NR.nonconvergence_criteria==0

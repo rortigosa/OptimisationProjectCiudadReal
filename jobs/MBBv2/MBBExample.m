@@ -9,7 +9,7 @@ CodePath=  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal';
 
 clc                              
 %--------------------------------------------------------------------------
-% Path to the code 
+% Path to the code    
 %--------------------------------------------------------------------------
 if ~exist(CodePath,'dir')
     error('No such folder or directory');
@@ -22,14 +22,14 @@ dir_name   =  mfilename('fullpath');
 [jobfolder, results_folder]  =  JobFolderID(dir_name); 
 addpath(genpath(fullfile(jobfolder)));
 %--------------------------------------------------------------------------
-%  User-Defined Functions                 
+%  User-Defined Functions                           
 %--------------------------------------------------------------------------
 ExampleData                              =  UserDefinedExampleData;
 Optimisation                             =  UserDefinedOptimisation;
 [Data,TimeIntegrator]                    =  UserDefinedInitialData;
 [FEM,Quadrature]                         =  UserDefinedFEMGaussQuadrature;
 NR                                       =  UserDefinedNR; 
-  
+   
 UserDefinedFuncs.Geometry                =  @ GeometryPreprocessor;
 UserDefinedFuncs.MechanicalDirichletBCs  =  @ UserDefinedDirichlet;
 UserDefinedFuncs.NodalLoads              =  @ UserDefinedNodalLoads;

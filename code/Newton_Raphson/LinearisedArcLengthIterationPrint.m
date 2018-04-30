@@ -7,6 +7,8 @@
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
-function ArcLengthIterationPrint(NR,Residual_dimensionless,AL,Residual)
+function LinearisedArcLengthIterationPrint(NR,AL)
 
-fprintf('Load Incr: %d, Iteration: %d,  Scaled Residual: %f, Residual: %1.3e  Acc Factor: %f,  Radius: %f\n',AL.iteration,NR.iteration,Residual_dimensionless,Residual,NR.accumulated_factor,AL.radius)
+
+
+fprintf('Load Incr: %d, Acc Factor: %f,  Radius: %f\n',AL.iteration,NR.accumulated_factor,AL.radius)
