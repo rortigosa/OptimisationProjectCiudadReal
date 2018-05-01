@@ -2,13 +2,24 @@ function [Solution,Optimisation]  =  IncrementalLinearisedArcLength(Data,NR,Geom
                                 FEM,Quadrature,MatInfo,Optimisation,...
                                 TimeIntegrator,PostProc,save_flag)
 
-AL.radius                       =  15;
+                            
+                            
+%--------------------------------------------------------------------------
+% Critical load
+%--------------------------------------------------------------------------
+Bc                              =  NeumannBcs(Geometry.dim,Data.formulation,Mesh,...
+                                              UserDefinedFuncs,Bc);
+Bc.Neumann.force_vector         =  BC.Neumann.force_vector*NR.critical_load;                            
+%--------------------------------------------------------------------------
+% Parameters for the arc-length
+%--------------------------------------------------------------------------
+AL.radius                       =  1;
+%AL.radius                      =  1;
 AL.fail                         =  0;
 AL.max_accumulated_factor       =  1.02;
 AL.min_diff_accumulated_factor  =  1e-5;  % minimum allowed difference for the accumulated factor
 AL.iteration                    =  0;
 NR.accumulated_factor           =  0.01;
-max_iter                        =  300;
 AL.max_number_AL_iterations     =  10;  % maximum number of iteration in the NR
 %--------------------------------------------------------------------------
 % Initialisation of the formulation
@@ -33,6 +44,8 @@ Solution.x.xincr                =  zeros(Solution.n_dofs,1);
 NR.nonconvergence_criteria      =  1;
 stopping_condition              =  1;
 NFails                          =  0;
+F0                              =  Bc.Neumann.force_vector;
+NR.iteration                    =  1;
 %while (stopping_condition  ||  AL.fail==1)
 while stopping_condition
     %----------------------------------------------------------------------
@@ -78,77 +91,66 @@ while stopping_condition
     %----------------------------------------------------------------------    
     Residual_dimensionless          =  1e8;  
     NR.nonconvergence_criteria  =  Residual_dimensionless>NR.tolerance;
-    %------------------------------------------------------------------
+    %----------------------------------------------------------------------
     % solving system of equations
-    %------------------------------------------------------------------
-    [freedof,fixdof]            =  DeterminationVariableFreeFixedDofs('~',Solution,Bc,NR);
+    %----------------------------------------------------------------------
+    [freedof,fixdof]               =  DeterminationVariableFreeFixedDofs('~',Solution,Bc,NR);
     
-    uR                          =  NewSolveSystemEquations(freedof,fixdof,...
+    uR                             =  NewSolveSystemEquations(freedof,fixdof,...
                                         Assembly.total_matrix,-Assembly.Residual,...
                                         zeros(Solution.n_dofs,1));
-    uF                          =  NewSolveSystemEquations(freedof,fixdof,...
-                                          Assembly.total_matrix,Bc.Neumann.force_vector,...
+    uF                             =  NewSolveSystemEquations(freedof,fixdof,...
+                                          Assembly.total_matrix,F0,...
                                           zeros(Solution.n_dofs,1));
     [uR,AL,...
-        NR,Solution]            =  ArcLengthRootFindingV2(AL,NR,uR,uF,Solution);
+        NR,Solution]               =  ArcLengthRootFindingV2(AL,NR,uR,uF,Solution);
     Solution.incremental_solution  =  uR;
-    %------------------------------------------------------------------
+    %----------------------------------------------------------------------
     % update the variables of the problem. corrector step.
-    %------------------------------------------------------------------
+    %----------------------------------------------------------------------
     Solution             =  FieldsUpdate(Data,Geometry,Mesh,Solution,TimeIntegrator,'~');
-    %------------------------------------------------------------------
+    %----------------------------------------------------------------------
+    % checking for convergence.
+    %----------------------------------------------------------------------
+    [NR,AL,...
+    stopping_condition]  =  LinearisedArcLengthConvergence(NR,old_NR,AL);
+    %----------------------------------------------------------------------
     % screen ouput for current Newton-Raphson iteration.
-    %------------------------------------------------------------------
-    LinearisedArcLengthIterationPrint(NR,old_NR,Solution,AL,norm(Assembly.Residual(Bc.Dirichlet.freedof))/norm(Bc.Neumann.force_vector))
+    %----------------------------------------------------------------------
+    LinearisedArcLengthIterationPrint(NR,AL);
     %----------------------------------------------------------------------
     % Store converged solution
     %----------------------------------------------------------------------
-    if NR.nonconvergence_criteria==0
-        old_solution             =  Solution;
-        old_NR                   =  NR;
-        old_AL                   =  AL;
-    end
-end  
-    switch NR.convergence_warning
-        %------------------------------------------------------------------
-        % Non converged results 
-        %------------------------------------------------------------------
-        case 1
-        %------------------------------------------------------------------
-        % Converged results 
-        %------------------------------------------------------------------
-        case 0
-            %--------------------------------------------------------------
-            % Printing orders for the converged case.    
-            %--------------------------------------------------------------
-            %ArcLengthConvergedSolutionPrint(NR,AL);            
-            %--------------------------------------------------------------
-            % Postprocessing for static case and saving results.                                     
-            %--------------------------------------------------------------
-            ArcLengthPostprocessing(dir,Optimisation,Geometry,Data,TimeIntegrator,...
-                    FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...
-                    UserDefinedFuncs,PostProc,AL,save_flag);
-            format long e              
-    end                   
-    if (NR.convergence_warning==0  &&  AL.iteration>max_iter)
-       break;
-    end
+    old_solution             =  Solution;
+    old_NR                   =  NR;
+    old_AL                   =  AL;
+    %----------------------------------------------------------------------
+    % Postprocessing for static case and saving results.
+    %----------------------------------------------------------------------
+    ArcLengthPostprocessing(dir,Optimisation,Geometry,Data,TimeIntegrator,...
+        FEM,Quadrature,NR,MatInfo,Bc,Solution,Mesh,Assembly,...
+        UserDefinedFuncs,PostProc,AL,save_flag);
+    format long e
 end                 
 
 Solution.instability  =  0;
-%--------------------------------------------------------------------------
-% Save solution field
-%--------------------------------------------------------------------------
-if AL.fail
-    Solution              =  old_solution;
-    NR                    =  old_NR;
-    %----------------------------------------------------------------------
-    % Convexified unstable problem
-    %----------------------------------------------------------------------
-    [Solution,...
-        Optimisation]     =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
-                                FEM,Quadrature,Assembly,MatInfo,Optimisation,...
-                                Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
-                                '~',1,0);
-    Solution.instability     =  1;
-end    
+% %--------------------------------------------------------------------------
+% % Save solution field
+% %--------------------------------------------------------------------------
+% %if AL.fail
+%     Solution              =  old_solution;
+%     NR                    =  old_NR;
+%     %----------------------------------------------------------------------
+%     % Convexified unstable problem
+%     %----------------------------------------------------------------------
+%     [Solution,...
+%         Optimisation]     =  LinearisedConvexifiedSolver(Data,NR,Geometry,Mesh,...
+%                                 FEM,Quadrature,Assembly,MatInfo,Optimisation,...
+%                                 Bc,Solution,UserDefinedFuncs,TimeIntegrator,...
+%                                 '~',1,0);
+%     Solution.instability     =  1;
+% %end    
+% 
+
+
+

@@ -2,7 +2,19 @@ function [Solution,Optimisation]  =  IncrementalLinearisedArcLength(Data,NR,Geom
                                 FEM,Quadrature,MatInfo,Optimisation,...
                                 TimeIntegrator,PostProc,save_flag)
 
-AL.radius                       =  0.5;
+                            
+                            
+%--------------------------------------------------------------------------
+% Critical load
+%--------------------------------------------------------------------------
+Bc                              =  NeumannBcs(Geometry.dim,Data.formulation,Mesh,...
+                                              UserDefinedFuncs,Bc);
+Bc.Neumann.force_vector         =  Bc.Neumann.force_vector*NR.critical_load;                            
+%--------------------------------------------------------------------------
+% Parameters for the arc-length
+%--------------------------------------------------------------------------
+AL.radius                       =  1;
+%AL.radius                      =  1;
 AL.fail                         =  0;
 AL.max_accumulated_factor       =  1.02;
 AL.min_diff_accumulated_factor  =  1e-5;  % minimum allowed difference for the accumulated factor
