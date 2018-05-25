@@ -17,8 +17,8 @@ end
 
 
 
-%CPath  = fullfile(pwd,'code','mexfiles');
-CPath  = fullfile(pwd,'code','mexfilesv2');
+CPath  = fullfile(pwd,'code','mexfiles');
+%CPath  = fullfile(pwd,'code','mexfilesv2');
 cdir   =  pwd;
 cd(CPath)
 
