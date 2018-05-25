@@ -18,7 +18,7 @@ uFuF                   =  uF'*uF;
 uRuR                   =  uR'*uR;
 uFuR                   =  uF'*uR;
 %--------------------------------------------------------------------------
-% For the first iteration set up  
+% For the first iteration set up   
 % (current Uf)X(last incr. total incremental uR.)
 % then zero total incremental uR. ready for current increment.
 %--------------------------------------------------------------------------

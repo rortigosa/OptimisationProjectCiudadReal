@@ -13,14 +13,14 @@ function  PostProc  =  CompliancePlots(dir,Geometry,Mesh,FEM,MatInfo,Solution,xP
 % PARAVIEW POSTPROCESSING
 %--------------------------------------------------------------------------
 % cd(dir.output_folder)
-% ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,Quadrature,...
-%          Optimisation,PostProc,0,['evolution_' num2str(iteration) '.vtk']);
+ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,Quadrature,...
+         Optimisation,PostProc,0,['evolution_' num2str(iteration) '.vtk']);
 %--------------------------------------------------------------------------
 % PARAVIEW POSTPROCESSING FOR THE REGULARISATION OF THE PROBLEM
 %--------------------------------------------------------------------------
-% cd(dir.output_folder)
-% ParaviewRegularisationQuantification(Geometry,Mesh,FEM,MatInfo,Solution,...
-%     Quadrature,Optimisation,1,['Regularisation_' num2str(iteration) '.vtk']);
+cd(dir.output_folder)
+ParaviewRegularisationQuantification(Geometry,Mesh,FEM,MatInfo,Solution,...
+    Quadrature,Optimisation,1,['Regularisation_' num2str(iteration) '.vtk']);
 %--------------------------------------------------------------------------
 % PARAVIEW POSTPROCESSING OF TANGENT OPERATORS
 %--------------------------------------------------------------------------

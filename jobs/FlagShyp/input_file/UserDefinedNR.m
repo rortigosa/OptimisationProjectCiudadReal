@@ -11,5 +11,5 @@ NR.nonlinearity             =  'nonlinear';
 NR.nonlinearity             =  'arclength';
 %NR.nonlinearity             =  'linearised_arclength';
 %NR.nonlinearity             =  'linearised_convexified';
-NR.instability_load_incr    =  10;
+NR.instability_load_incr    =  5 ;
 NR.critical_load            =  1;

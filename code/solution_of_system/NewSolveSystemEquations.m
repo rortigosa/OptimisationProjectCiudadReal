@@ -21,6 +21,6 @@ dU(freedof)                 =  reduced_matrix\R(freedof,1);
 % eigs(reduced_matrix);
 % toc 
 % tic
-% [v,c]=eigs(reduced_matrix,20,'sm');
+% [v,c]=eigs(reduced_matrix,10,'sm');
 % toc
 % asdf=98

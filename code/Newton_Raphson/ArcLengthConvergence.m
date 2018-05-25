@@ -30,11 +30,12 @@ if NR.iteration == 1
 elseif NR.iteration>1
     assembly.Residual_stored{1}(NR.iteration)   =  norm(assembly.Residual(bc.Dirichlet.freedof))/NR.convergence_factor;
     Residual_dimensionless                      =  assembly.Residual_stored{1}(NR.iteration);
-    if assembly.Residual_stored{1}(NR.iteration)>1e1*assembly.Residual_stored{1}(NR.iteration-1)
+    %if assembly.Residual_stored{1}(NR.iteration)>1e4*assembly.Residual_stored{1}(NR.iteration-1)
+    if assembly.Residual_stored{1}(NR.iteration)>1e3
         NR.convergence_warning                  =  1;
         AL.fail                                 =  1;        
     end 
-end  
+end   
 %--------------------------------------------------------------------------
 % First convergence criterion (based on the Residual)
 %--------------------------------------------------------------------------
@@ -81,7 +82,7 @@ if NR.nonconvergence_criteria==0
    % Obtain a good estimate of the critical load
    %-----------------------------------------------------------------------
    else
-      if AL.iteration>10
+      if AL.iteration>10  &&  AL.critical_load_estimation
          if (NR.accumulated_factor-old_NR.accumulated_factor)<AL.min_diff_accumulated_factor && abs(NR.accumulated_factor - old_NR.accumulated_factor)<abs(1-AL.max_accumulated_factor)
             stopping_condition  =  0;
             AL.fail             =  1;

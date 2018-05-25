@@ -9,6 +9,8 @@ AL.iteration                    =  0;
 NR.accumulated_factor           =  0.01;
 AL.max_accumulated_factor       =  10;
 AL.min_diff_accumulated_factor  =  0;
+AL.max_number_AL_iterations     =  15;
+AL.critical_load_estimation     =  0;
 %--------------------------------------------------------------------------
 % Initialisation of the formulation
 %--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ AL.min_diff_accumulated_factor  =  0;
 NR.nonlinearity                 =  'nonlinear';
 TimeIntegrator.type             =  'Static';
 %--------------------------------------------------------------------------
-% Initial Assembly
+% Initial Assembly 
 %--------------------------------------------------------------------------
 Assembly                        =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mesh,...
                                       FEM,Quadrature,Assembly,MatInfo,...
@@ -26,12 +28,12 @@ Assembly                        =  FEMAssembly(Data,NR.nonlinearity,Geometry,Mes
 %--------------------------------------------------------------------------
 % Cut-off density
 %--------------------------------------------------------------------------
-cutoff  =  0.4;
+cutoff  =  0.1;
 Optimisation.density(Optimisation.density>=cutoff) =  1;
 Optimisation.density(Optimisation.density<cutoff)  =  0;
 
 %--------------------------------------------------------------------------
-% Start
+% Start 
 %--------------------------------------------------------------------------
 old_solution                    =  Solution;
 old_NR                          =  NR;
@@ -39,7 +41,7 @@ old_AL                          =  AL;
 Solution.x.xincr                =  zeros(Solution.n_dofs,1);
 NR.nonconvergence_criteria      =  1;
 stopping_condition              =  1;
-NFails                          =  0;
+NFails                          =  0; 
 while (stopping_condition  ||  AL.fail==1)
     %----------------------------------------------------------------------
     % Initialisation variables   
@@ -68,7 +70,7 @@ while (stopping_condition  ||  AL.fail==1)
        NR.iteration             =  0;
     end
     if NFails>20
-        break;
+        break; 
     end
     %----------------------------------------------------------------------    
     % Update Dirichlet boundary conditions.        
@@ -88,7 +90,7 @@ while (stopping_condition  ||  AL.fail==1)
     while NR.nonconvergence_criteria    
         NR.iteration            =  NR.iteration + 1;
         %------------------------------------------------------------------
-        % solving system of equations                                                                                         
+        % solving system of equations                                                                                          
         %------------------------------------------------------------------
         [freedof,fixdof]            =  DeterminationVariableFreeFixedDofs('~',Solution,Bc,NR);
         
@@ -100,7 +102,7 @@ while (stopping_condition  ||  AL.fail==1)
                                                zeros(Solution.n_dofs,1));
         [uR,AL,...
          NR,Solution]       =  ArcLengthRootFindingV2(AL,NR,uR,uF,Solution);                                           
-        Solution.incremental_solution  =  uR;
+        Solution.incremental_solution  =  uR; 
         %------------------------------------------------------------------
         % update the variables of the problem. corrector step.                                
         %------------------------------------------------------------------
@@ -123,7 +125,7 @@ while (stopping_condition  ||  AL.fail==1)
         %------------------------------------------------------------------
         % screen ouput for current Newton-Raphson iteration.                                   
         %------------------------------------------------------------------
-        ArcLengthIterationPrint(NR,Residual_dimensionless,AL);
+        ArcLengthIterationPrint(NR,Residual_dimensionless,AL,norm(Assembly.Residual(Bc.Dirichlet.freedof))/norm(Bc.Neumann.force_vector));
         %------------------------------------------------------------------
         % Store converged solution 
         %------------------------------------------------------------------

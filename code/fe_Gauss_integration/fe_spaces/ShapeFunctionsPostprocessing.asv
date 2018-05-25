@@ -1,4 +1,0 @@
-function [N,DN_chi]  =  ShapeFunctionsPostprocessing(dim)
-
-
-load(['Quad_NodeShapeFunctions_Q' num2str(1) '.mat']);

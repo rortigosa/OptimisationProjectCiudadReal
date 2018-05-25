@@ -2,15 +2,26 @@ function [Solution,Optimisation]  =  IncrementalArcLength(Data,NR,Geometry,Mesh,
                                 FEM,Quadrature,MatInfo,Optimisation,...
                                 TimeIntegrator,PostProc,save_flag)
 
-AL.radius                       =  0.005;
+
+%--------------------------------------------------------------------------
+% Critical load
+%--------------------------------------------------------------------------
+Bc.Neumann.load_factor          =  Bc.Neumann.load_factor*NR.critical_load;
+Bc                              =  NeumannBcs(Geometry.dim,Data.formulation,Mesh,...
+                                              UserDefinedFuncs,Bc);
+%--------------------------------------------------------------------------
+% Arc-length parameters
+%--------------------------------------------------------------------------
+AL.radius                       =  0.5;
 %AL.radius                       =  45;
 AL.fail                         =  0;
 AL.max_accumulated_factor       =  1.02;
-AL.min_diff_accumulated_factor  =  1e-5;  % minimum allowed difference for the accumulated factor
+AL.min_diff_accumulated_factor  =  1e-3;  % minimum allowed difference for the accumulated factor
 AL.iteration                    =  0;
 NR.accumulated_factor           =  0.01;
-max_iter                        =  300;
-AL.max_number_AL_iterations     =  10;  % maximum number of iteration in the NR
+max_iter                        =  50;
+AL.max_number_AL_iterations     =  20;  % maximum number of iteration in the NR
+AL.critical_load_estimation     =  1;
 %--------------------------------------------------------------------------
 % Initialisation of the formulation
 %--------------------------------------------------------------------------
@@ -157,7 +168,7 @@ while stopping_condition
     end                   
     if (NR.convergence_warning==0  &&  AL.iteration>max_iter)
        break;
-    end
+    end 
 end                 
 
 Solution.instability  =  0;
@@ -165,8 +176,16 @@ Solution.instability  =  0;
 % Save solution field
 %--------------------------------------------------------------------------
 if AL.fail
-    Solution              =  old_solution;
-    NR                    =  old_NR;
+    Solution                  =  old_solution;
+    NR                        =  old_NR;
+    %----------------------------------------------------------------------
+    % The  umber of stability iterations is scaled
+    %----------------------------------------------------------------------
+    if NR.accumulated_factor>1
+       NR.instability_load_incr  =  5;    
+    else
+       NR.instability_load_incr  =  max(5,ceil((1 - NR.accumulated_factor)*NR.instability_load_incr));
+    end
     %----------------------------------------------------------------------
     % Convexified unstable problem
     %----------------------------------------------------------------------

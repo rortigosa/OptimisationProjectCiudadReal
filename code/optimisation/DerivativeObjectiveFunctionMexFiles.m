@@ -32,14 +32,7 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     % Compute Piola and the Elasticity tensor for the nonlinear model
     %----------------------------------------------------------------------
-    Piola               =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
-%     if ~Geometry.PlaneStress
-%        Piola              =  MooneyRivlinMexC(MatInfo.mu1,MatInfo.mu2,...
-%                                    MatInfo.lambda,F,H,J);
-%     else
-%        Piola              =  MooneyRivlinPlaneStress(MatInfo.mu1,MatInfo.mu2,...
-%                                    MatInfo.lambda,F,H,J);
-%     end        
+    Piola                 =  ConstitutiveModels(Geometry.PlaneStress,MatInfo,F,H,J);
     %----------------------------------------------------------------------
     % Determine if linear elasticity or nonlinear elasticity shall be applied
     % on the current element

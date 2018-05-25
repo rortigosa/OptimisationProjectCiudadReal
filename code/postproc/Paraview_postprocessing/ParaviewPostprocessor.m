@@ -3,6 +3,7 @@ function  ParaviewPostprocessor(Geometry,Mesh,FEM,MatInfo,Solution,...
 
 if visibility==0
    cutoff_density  =  Optimisation.Volfrac;
+   cutoff_density  =  0.5;
 else 
    cutoff_density  =  0;
 end

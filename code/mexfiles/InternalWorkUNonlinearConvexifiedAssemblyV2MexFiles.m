@@ -34,6 +34,7 @@ DNX                     =  FEM.volume.bilinear.x.DN_X;
 IntWeight               =  Quadrature.volume.bilinear.IntWeight;
 ngauss                  =  size(IntWeight,1);
 Imatrix                 =  repmat(eye(Geometry.dim^2),1,1,ngauss);
+alpha_max               =  zeros(Mesh.volume.n_elem  ,1);
 %--------------------------------------------------------------------------
 % Compute residual and (non-regularised) part of the stiffness matrix
 %--------------------------------------------------------------------------
@@ -58,8 +59,14 @@ for ielem=1:Mesh.volume.n_elem
     %----------------------------------------------------------------------
     alpha                =  RegularisationParameterElasticityMexC(Geometry.dim^2,ngauss,Elasticity,ElasticityOrigin);            
     ElasticityReg        =  MatrixScalarMultiplicationMexC(Geometry.dim^2,ngauss,Imatrix,alpha);    
-    Elasticity           =  Elasticity + 1.5*StabilisationFactor*ElasticityReg;
-    %Elasticity          =  RegularisationElasticityEigenvaluesMatLab(ngauss,Elasticity);
+    Elasticity           =  Elasticity + 1.05*StabilisationFactor*ElasticityReg;
+    %----------------------------------------------------------------------
+    % Penalise stabilised contributions 
+    %----------------------------------------------------------------------       
+%     alpha(alpha>1)       =  1;
+%     penalisation         =  max((1-alpha),0.3);
+%     Piola                =  MatrixScalarMultiplicationMexC(Geometry.dim,ngauss,Piola,penalisation);
+%     Elasticity           =  MatrixScalarMultiplicationMexC(Geometry.dim^2,ngauss,Elasticity,penalisation);
     %----------------------------------------------------------------------
     % Compute residuals and stiffness matrix for the nonlinear model
     %----------------------------------------------------------------------       
@@ -75,7 +82,8 @@ for ielem=1:Mesh.volume.n_elem
     % Sparse assembly 
     %----------------------------------------------------------------------
     Kdata(:,ielem)      =  Kxx(:);      
-    Tdata(:,ielem)      =  Rx(:);    
+    Tdata(:,ielem)      =  Rx(:);  
+    alpha_max(ielem)=max(alpha);
 end     
 %--------------------------------------------------------------------------
 % Sparse assembly of the stiffness matrix.           

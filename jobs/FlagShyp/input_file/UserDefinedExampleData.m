@@ -9,8 +9,8 @@ ExampleData.loads                   =  [0.01;0.03;0.06;...
                                         0.1;0.3;0.6;...
                                         1;3;6]*1e-3;  % Plane stress
                                     
-%ExampleData.loads                  =  3*1e-3;
-ExampleData.loads                  =  12*1e-4;
+ExampleData.loads                  =  6*1e-3;
+%ExampleData.loads                  =  6*1e-4;
 %ExampleData.loads = 0.05*1.973684210526316e+02;
 %ExampleData.loads  =  6e-3;
                                     

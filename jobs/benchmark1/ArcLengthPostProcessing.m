@@ -1,8 +1,11 @@
 function ArcLengthPostProcessingv2
 
-CodePath  =  'P:\TopologyCode\code'; 
-JobsPath  =  'P:\TopologyCode\jobs\MBBv2';
-InputPath =  'P:\TopologyCode\jobs\MBBv2\input_file';
+CodePath  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\code'; 
+JobsPath  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\benchmark1';
+InputPath =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\benchmark1\input_file';
+
+
+
 %--------------------------------------------------------------------------
 % Path to the code  
 %--------------------------------------------------------------------------
@@ -12,14 +15,16 @@ end
 addpath(genpath(fullfile(CodePath,'code')));
 addpath(JobsPath);
 addpath(InputPath);
-
+ 
 
 %--------------------------------------------------------------------------
 % Simulation 1  
 %--------------------------------------------------------------------------
-jobfolder  =  'P:\TopologyCode\jobs\Benchmark1\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_0.0045';
+jobfolder  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\benchmark1\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_0.009';
+jobfolder  =  'C:\SoftwareDevelopment\OptimisationProjectCiudadReal\jobs\benchmark1\resultsVolume_fraction_0.4_MooneyRivlin_model_load_factor_9';
 addpath(genpath(fullfile(jobfolder)));
-load_    =  251;
+load_    =  269; 
+load_  =  301;
 cd(jobfolder);  
 load(['Results_Optimisation_Iteration_' num2str(load_) '.mat']);
 UserDefinedFuncs.ArcLengthControl   =  @UserDefinedArcLength;    
